@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "A simple web server",
   "main": "server.js",
-
   "dependencies": {
+    "cors": "^2.8.5",
     "events": "^3.3.0",
     "express": "^4.21.0",
     "mysql2": "^3.11.3",
@@ -12,6 +12,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   }
 }
