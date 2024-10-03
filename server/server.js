@@ -12,7 +12,7 @@ const db = mysql.createConnection({
 	host: "localhost",
 	user: "root",
 	password: "",
-	database: "movie"
+	database: "moviedb"
   });
 
 
@@ -26,20 +26,20 @@ app.use(express.json());
 
 app.get("/recentlyreleased", (req, res) =>{
 
-  //revert today's date back 3 months
-  const todaysDate = new Date();
-  let d = todaysDate.getDate();
-  todaysDate.setMonth(todaysDate.getMonth() + -3);
-  if (todaysDate.getDate() != d) {
-    todaysDate.setDate(0);
-  }
-  //format date in YYYYMMDD
-  let year = todaysDate.getFullYear();
-  let month = todaysDate.getMonth()+1;  //0 indexed
-  if (month < 10){ month = `0${month}`;}
-  let formattedDate = `${year}${month}00`;
+  //revert today's date back 3 years
+  // const todaysDate = new Date();
+  // let d = todaysDate.getDate();
+  // todaysDate.setMonth(todaysDate.getMonth() + -3*12);
+  // if (todaysDate.getDate() != d) {
+  //   todaysDate.setDate(0);
+  // }
+  // //format date in YYYYMMDD
+  // let year = todaysDate.getFullYear();
+  // let month = todaysDate.getMonth()+1;  //0 indexed
+  // if (month < 10){ month = `0${month}`;}
+  // let formattedDate = `${year}${month}00`;
   //query db
-  const q = "SELECT * FROM movies WHERE `date` >= ?";
+  const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 12";
   db.query( q, [formattedDate], (err, result) => {
     if (err) {res.json({message: "DB recently released error"});}
     return res.json(result);
@@ -47,7 +47,7 @@ app.get("/recentlyreleased", (req, res) =>{
 });
 
 app.get("/toprated", (req, res) =>{
-  const q = "SELECT * FROM movies WHERE `rating` > 8";
+  const q = "SELECT * FROM movies ORDER BY `rating` DESC LIMIT 12";
   db.query( q, [], (err, result) => {
     if (err) {res.json({message: "DB top rated error"});}
     return res.json(result);
