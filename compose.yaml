@@ -8,6 +8,8 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
+
+  
   server:
     build:
       context: .
@@ -15,12 +17,16 @@ services:
       NODE_ENV: production
     ports:
       - 3000:3000
+    networks:
+      - back
     develop:
       watch:
         - action: sync
           path: .
           target: /usr/src/app
-
+    depends_on:
+          mysql:
+            condition: service_healthy
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
@@ -28,30 +34,34 @@ services:
 # database data between container restarts. The `db-password` secret is used
 # to set the database password. You must create `db/password.txt` and add
 # a password of your choosing to it before running `docker-compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
+    
+  mysql:
+    image: mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
 #     user: postgres
 #     secrets:
 #       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
+    networks:
+      - back
+    volumes:
+      - db-data:/var/lib/sql/data
+    environment:
+      MYSQL_ROOT_PASSWORD: '' # TODO: Change this
+      MYSQL_USER: 'root'
+      MYSQL_PASS: ''
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
 # secrets:
 #   db-password:
 #     file: db/password.txt
 
+networks:
+  # The presence of these objects is sufficient to define them
+  front: {}
+  back: {}

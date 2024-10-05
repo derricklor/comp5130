@@ -17,12 +17,20 @@ const db = mysql.createConnection({
 
 
 // Serve static files from the public dir
-app.use(express.static(path.join(__dirname,"public")));
+//app.use(express.static(path.join(__dirname,"public")));
 
 
 // Middleware functions
 app.use(cors());
 app.use(express.json());
+
+app.get("/", (req, res) =>{
+  const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 4";
+  db.query( q, [], (err, result) => {
+    if (err) {res.json({message: "DB home error"});}
+    return res.json(result);
+  });
+});
 
 app.get("/recentlyreleased", (req, res) =>{
 
@@ -40,7 +48,7 @@ app.get("/recentlyreleased", (req, res) =>{
   // let formattedDate = `${year}${month}00`;
   //query db
   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 12";
-  db.query( q, [formattedDate], (err, result) => {
+  db.query( q, [], (err, result) => {
     if (err) {res.json({message: "DB recently released error"});}
     return res.json(result);
   });
@@ -63,14 +71,15 @@ app.get("/movie/:id", (req, res) =>{
   });
 });
 
-app.get("/people/:id", (req, res) =>{
-  const id = req.params.id;
-  const q = "SELECT * FROM people WHERE `id` = ?";
-  db.query( q, [id], (err, result) => {
-    if (err) {res.json({message: "DB people error"});}
-    return res.json(result);
-  });
-});
+// deprecated
+// app.get("/people/:id", (req, res) =>{
+//   const id = req.params.id;
+//   const q = "SELECT * FROM people WHERE `id` = ?";
+//   db.query( q, [id], (err, result) => {
+//     if (err) {res.json({message: "DB people error"});}
+//     return res.json(result);
+//   });
+// });
 
 /* // enable CORS in express https://enable-cors.org/server_expressjs.html
 app.use(function(req, res, next) {

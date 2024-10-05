@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 03, 2024 at 06:44 PM
+-- Generation Time: Oct 04, 2024 at 03:35 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -59,7 +59,9 @@ INSERT INTO `movies` (`title`, `released`, `runtime`, `director`, `id`, `rating`
 ('Godzilla Minus One', 20231201, 125, 'Takashi Yamazaki', 12, 7.7, 'Action, Horror, Epic', 'Post-war Japan is at its lowest point when a new crisis emerges in the form of a giant monster, baptized in the horrific power of the atomic bomb.', 'Munetaka Aoki, Minami Hamabe, Sakura Ando', 'https://m.media-amazon.com/images/M/MV5BMjc5MjllMGUtMDIwMS00ZDVkLWEzODQtM2NlMTMwMTZhNThmXkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg'),
 ('Mission: Impossible - Dead Reckoning Part One', 20230712, 163, 'Christopher McQuarrie', 13, 7.7, 'Action, Thriller, Adventure', 'Ethan Hunt and his IMF team must track down a dangerous weapon before it falls into the wrong hands.', 'Tom Cruise, Hayley Atwell, Ving Rhames', 'https://m.media-amazon.com/images/M/MV5BN2U4OTdmM2QtZTkxYy00ZmQyLTg2N2UtMDdmMGJmNDhlZDU1XkEyXkFqcGc@._V1_QL75_UY562_CR1,0,380,562_.jpg'),
 ('Top Gun: Maverick', 20220527, 131, 'Joseph Kosinski', 14, 8.2, 'Action, Drama, Epic', 'The story involves Maverick confronting his past while training a group of younger Top Gun graduates, including the son of his deceased best friend, for a dangerous mission.', 'Tom Cruise, Jennifer Connelly, Miles Teller', 'https://m.media-amazon.com/images/M/MV5BMDBkZDNjMWEtOTdmMi00NmExLTg5MmMtNTFlYTJlNWY5YTdmXkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg'),
-('All Quiet on the Western Front', 20221014, 147, 'Edward Berger', 15, 7.8, 'War, Action, Drama', 'A young German soldier\'s terrifying experiences and distress on the western front during World War I.', 'Felix Kammerer, Albrecht Schuch, Aaron Hilmer', 'https://m.media-amazon.com/images/M/MV5BOWJiYWMyYTktZThhOS00ZjgxLWE0YTQtZDMyNTQxMjMyYjI2XkEyXkFqcGc@._V1_QL75_UX380_CR0,4,380,562_.jpg');
+('All Quiet on the Western Front', 20221014, 147, 'Edward Berger', 15, 7.8, 'War, Action, Drama', 'A young German soldier\'s terrifying experiences and distress on the western front during World War I.', 'Felix Kammerer, Albrecht Schuch, Aaron Hilmer', 'https://m.media-amazon.com/images/M/MV5BOWJiYWMyYTktZThhOS00ZjgxLWE0YTQtZDMyNTQxMjMyYjI2XkEyXkFqcGc@._V1_QL75_UX380_CR0,4,380,562_.jpg'),
+('The Wolf of Wall Street', 20131225, 180, 'Martin Scorsese', 16, 8.2, 'Biography, Comedy, Crime', 'Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government.', 'Leonardo DiCaprio, Jonah Hill, Margot Robbie, Matthew McConaughey', 'https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_QL75_UX380_CR0,0,380,562_.jpg'),
+('Rogue One: A Star Wars Story', 20161216, 133, 'Gareth Edwards', 17, 7.8, 'Action, Adventure, Sci-Fi', 'In a time of conflict, a group of unlikely heroes band together on a mission to steal the plans to the Death Star, the Empire\'s ultimate weapon of destruction.', 'Felicity Jones, Tony Gilroy, John Knoll', 'https://m.media-amazon.com/images/M/MV5BMjEwMzMxODIzOV5BMl5BanBnXkFtZTgwNzg3OTAzMDI@._V1_QL75_UX380_CR0,0,380,562_.jpg');
 
 --
 -- Indexes for dumped tables
@@ -79,7 +81,7 @@ ALTER TABLE `movies`
 -- AUTO_INCREMENT for table `movies`
 --
 ALTER TABLE `movies`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
