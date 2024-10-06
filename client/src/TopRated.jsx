@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {Link, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 
+function TopRated() {
 
-function Movie() {
-    const {id} = useParams();
     const [data, setData] = useState([]);
     useEffect(() => {
-        axios.get(`/movie/:${id}`)
+        axios.get("/toprated")
         .then((res) => {
             setData(res.data);
         })
         .catch((err) => console.log(err));
-    }, [id]);
+
+        console.log("get top rated");
+    }, []);
 
     return (
-        <div>
-            <h1>Movie</h1>
-            <Link to="/">Home</Link>
-        </div>
+        <h1>Top Rated</h1>
     )
 }
 
-export default Movie
+export default TopRated

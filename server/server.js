@@ -24,7 +24,7 @@ const db = mysql.createConnection({
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) =>{
+app.get("/home", (req, res) =>{
   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 4";
   db.query( q, [], (err, result) => {
     if (err) {res.json({message: "DB home error"});}

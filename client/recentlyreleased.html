@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MovieDB</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <!-- ========== Start navbar ========== -->
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <div class="container">
+          <a class="navbar-brand" href="index.html">MovieDB</a>
+          <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapsibleNavId" aria-controls="collapsibleNavId" aria-expanded="false"
+              aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="collapsibleNavId">
+              <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link " href="recentlyreleased.html">Recently Released</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="toprated.html">Top Rated</a>
+                  </li>
+              </ul>
+              <form class="d-flex my-2 my-lg-0">
+                  <input class="form-control me-sm-2" type="text" placeholder="Search" />
+                  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                      Search
+                  </button>
+              </form>
+          </div>
+      </div>
+    </nav>
+    <!-- ========== End navbar ========== -->
+    <!-- ========== Start root ========== -->
+    <p>recently released</p>
+    <div id="root"></div>
+    <script type="module" src="/src/RecentlyReleased.jsx"></script>
+    <!-- ========== End root ========== -->
+    <!-- ========== Start footer ========== -->
+    <div class="container">
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+          <p class="col-md-4 mb-0 text-body-secondary">© 2024 Company, Inc</p>
+      
+          <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+          <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+          </a>
+      
+          <ul class="nav col-md-4 justify-content-end">
+            <li class="nav-item"><a href="index.html" class="nav-link px-2 text-body-secondary">Home</a></li>
+            <li class="nav-item"><a href="recentlyreleased.html" class="nav-link px-2 text-body-secondary">Recently Released</a></li>
+            <li class="nav-item"><a href="toprated.html" class="nav-link px-2 text-body-secondary">Top Rated</a></li>
+          </ul>
+      </footer>
+    </div>
+    <div class="b-example-divider"></div>
+    <!-- ========== End footer ========== -->
+  </body>
+</html>
