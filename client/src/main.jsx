@@ -11,12 +11,11 @@ import Root, {
 } from "./routes/root";
 
 import Index from "./routes/index";
-import ErrorPage from "./src/errorpage";
+import ErrorPage from "./errorpage";
 import Movie, { loader as movieLoader } from "./routes/movie";
 import EditMovie, { action as editAction } from "./routes/edit";
 import { action as deleteAction } from "./routes/delete";
 
-import App from "./app";
 
 const router = createBrowserRouter([
     {
