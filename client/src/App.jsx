@@ -1,13 +1,31 @@
 import React from "react";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 
 import Index from "./index";
 import RecentlyReleased from "./RecentlyReleased";
 import TopRated from "./TopRated";
-import Movie from "./Movie";
+import Movie from "./routes/movie";
 
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Root />}>
+      <Route path="dashboard" element={<Dashboard />} />
+      {/* ... etc. */}
+    </Route>
+  )
+);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>
+);
 
 function App() {
   return (
