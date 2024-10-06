@@ -1,5 +1,14 @@
 import { Form, useLoaderData, redirect , useNavigate} from "react-router-dom"
-import { updateMovie } from "../movies";
+import axios from "axios"
+
+
+export async function updateMovie(id, updates){
+    axios.post(`/movie/${id}/edit`, updates)
+    .then((res) =>{
+        console.log(res);
+    })
+    .catch((err)=> console.log(err))
+}
 
 export async function action({ request, params }) {
     const formData = await request.formData();
@@ -28,39 +37,39 @@ export default function EditMovie() {
     <Form method="post" id="movie-form">
     <p>
         <span>Title</span>
-        <input type="text" name="title" placeholder="Title" defaultValue={"sample title"} />
+        <input type="text" name="title" placeholder="Title" defaultValue={movie.title} />
     </p>
     <label>
         <span>Released</span>
-        <input type="number" name="released" placeholder="YYYYMMDD" defaultValue={55556677} />
+        <input type="number" name="released" placeholder="YYYYMMDD" defaultValue={movie.released} />
     </label>
     <label>
         <span>Runtime</span>
-        <input type="number" name="runtime" placeholder="# in minutes" defaultValue={5} />
+        <input type="number" name="runtime" placeholder="# in minutes" defaultValue={movie.runtime} />
     </label>
     <label>
         <span>Director</span>
-        <input type="text" name="director" placeholder="director name" defaultValue="sample director" />
+        <input type="text" name="director" placeholder="director name" defaultValue={movie.director} />
     </label>
     <label>
         <span>Rating</span>
-        <input type="number" name="rating" placeholder="0.0-10.0" defaultValue={5} />
+        <input type="number" name="rating" placeholder="0.0-10.0" defaultValue={movie.rating} />
     </label>
     <label>
         <span>Genre</span>
-        <input type="text" name="plot" placeholder="less than 255 chars" defaultValue="sample genre" />
+        <input type="text" name="plot" placeholder="less than 255 chars" defaultValue={movie.genre} />
     </label>
     <label>
         <span>Plot</span>
-        <textarea name="plot" placeholder="less than 255 chars" defaultValue="sample plot" rows={3} />
+        <textarea name="plot" placeholder="less than 255 chars" defaultValue={movie.plot} rows={3} />
     </label>
     <label>
         <span>Actors</span>
-        <input type="text" name="actors" placeholder="less than 255 chars" defaultValue="sample actor" />
+        <input type="text" name="actors" placeholder="less than 255 chars" defaultValue={movie.actors} />
     </label>
     <label>
         <span>Poster URL</span>
-        <input type="text" name="poster" placeholder="less than 255 chars" defaultValue="sample poster" />
+        <input type="text" name="poster" placeholder="less than 255 chars" defaultValue={movie.poster} />
     </label>
     <p>
         <button type="submit">Save</button>

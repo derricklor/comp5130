@@ -1,5 +1,33 @@
 import { Link, Outlet, useLoaderData, Form, redirect } from "react-router-dom";
-import { getMovies, createMovie } from "../movies";
+import axios from "axios"
+//import { getMovies, createMovie } from "../movies";
+
+function Log(str){
+    console.log(str);
+}
+
+export async function createMovie() {
+    axios.post(`/movie/create`)
+    .then((res) =>{
+        console.log(res);
+        return res // should return json of new movie
+    })
+    .catch((err)=> console.log(err))
+    
+}
+
+export async function getMovies() {
+    Log("inside the getMovies()");// TODO
+    axios.get(`recentlyreleased`)
+    .then((res) =>{
+        Log("inside the res");
+        console.log(res);
+        Log("out res");
+        return res // should return json of newly released movies
+    })
+    .catch((err)=> console.log(err))
+    
+}
 
 export async function action() {
     const movie = await createMovie();

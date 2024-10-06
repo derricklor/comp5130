@@ -2,7 +2,16 @@ import React, { useEffect, useState, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import axios from "axios";
 import {Link, useParams, Form, useLoaderData } from "react-router-dom";
-import { getMovie } from "../movies";
+
+export async function getMovie(id) {
+    axios.get(`/movie/${id}`)
+    .then((res) =>{
+        console.log(res);
+        return res
+    })
+    .catch((err)=> console.log(err))
+    
+}
 
 export async function loader({ params }) {
   //axios?

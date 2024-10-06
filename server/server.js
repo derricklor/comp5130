@@ -5,7 +5,7 @@ const cors = require("cors");
 const path = require("path");
 
 const app = express();
-const port = 3000;
+const port = 4000;
 
 // Connect to db
 const db = mysql.createConnection({
@@ -62,11 +62,41 @@ app.get("/toprated", (req, res) =>{
   });
 });
 
+app.post("/movie/create", (req, res) =>{
+  const q = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
+                         VALUES (`New`, `12345678`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
+  db.query( q, [], (err, result) => {
+    if (err) {res.json({message: "DB create movie error"});}
+    return res.json(result);
+  });
+});
+
 app.get("/movie/:id", (req, res) =>{
   const id = req.params.id;
   const q = "SELECT * FROM movies WHERE `id` = ?";
-  db.query( q, [id], (err, result) => {
-    if (err) {res.json({message: "DB movie error"});}
+  db.query( q, id, (err, result) => {
+    if (err) {res.json({message: "DB get movie error"});}
+    return res.json(result);
+  });
+});
+
+app.post("/movie/:id/edit", (req, res) =>{
+  const id = req.params.id;
+  const values = [
+    req.body.title, req.body.released, req.body.runtime, req.body.director, 
+    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster ]
+  const q = `UPDATE movies SET title= ${value[0]}, released= ${value[1]}, runtime= ${value[2]}, director= ${value[3]}, rating= ${value[4]} genre= ${value[5]}, plot= ${value[6]}, actors= ${value[7]}, poster= ${value[8]} WHERE id =${id}`
+  db.query(q, values, (err, result) =>{
+    if (err) return res.json({message: "Movie edit error: " +err})
+    return res.json(result);
+  })
+});
+
+app.post("/movie/:id/delete", (req, res) =>{
+  const id = req.params.id;
+  const q = "DELETE FROM movies WHERE `id`= ?"
+  db.query( q, id, (err, result) => {
+    if (err) {res.json({message: "Movie delete error: " +err});}
     return res.json(result);
   });
 });
