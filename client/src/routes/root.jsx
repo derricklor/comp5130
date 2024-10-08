@@ -1,13 +1,12 @@
 import { Link, Outlet, useLoaderData, Form, redirect } from "react-router-dom";
 import axios from "axios"
-//import { getMovies, createMovie } from "../movies";
 
 function Log(str){
     console.log(str);
 }
 
 export async function createMovie() {
-    axios.post(`/movie/create`)
+    await axios.post(`/movie/create`)
     .then((res) =>{
         console.log(res);
         return res // should return json of new movie
@@ -17,12 +16,9 @@ export async function createMovie() {
 }
 
 export async function getMovies() {
-    Log("inside the getMovies()");// TODO
-    axios.get(`recentlyreleased`)
+    axios.get(`/recentlyreleased`)
     .then((res) =>{
-        Log("inside the res");
         console.log(res);
-        Log("out res");
         return res // should return json of newly released movies
     })
     .catch((err)=> console.log(err))
@@ -35,39 +31,41 @@ export async function action() {
   }
 
 export async function loader() {
-    //axios
-    const movie = await getMovies();
-    return { movie };
+    const movies = await getMovies();
+    return { movies };
 }
 
 export default function Root() {
     const { movies } = useLoaderData();
+    Log(`movies array length`)
+    console.log(movies)
     return (
         <>
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-        <Link to={`/`} class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-            <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
-            <span class="fs-4">MovieDB</span>
-        </Link>
-            <hr>
-                <ul class="nav nav-pills flex-column mb-auto">
+        <div className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style={{ width: 280 }}>
+            <Link to={`/`} className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg className="bi me-2" width="16" height="16"><use xlinkHref="#home"></use></svg>
+                <span className="fs-4">MovieDB</span>
+            </Link>
+            <hr/>
+                <ul className="nav nav-pills flex-column mb-auto">
                     <li>
                         <Link to={`/recentlyreleased`}>
-                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                            <svg className="bi me-2" width="16" height="16"><use xlinkHref="#table"></use></svg>
                             Recently Released
                         </Link>
                     </li>
                     <li>
                         <Link to={`/toprated`}>
-                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                            <svg className="bi me-2" width="16" height="16"><use xlinkHref="#speedometer2"></use></svg>
                             Top Rated
                         </Link>
                     </li>
                 </ul>
-            </hr>
+            
         </div>
+        <div class="b-example-divider"></div>
         <div>
-            {movies.length ? (
+            {movies?.length > 1 ? (
                 <ul>
                     {movies.map((movie) => (
                         <li key={movie.id}>
@@ -88,8 +86,9 @@ export default function Root() {
             </Form>
         </div>
 
-        <div id="detail"></div>
-        <Outlet/>
+        <div id="detail">
+            <Outlet/>
+        </div>
       </>
     );
   }
