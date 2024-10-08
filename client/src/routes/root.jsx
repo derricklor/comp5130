@@ -63,7 +63,8 @@ export default function Root() {
                 </ul>
             
         </div>
-        <div class="b-example-divider"></div>
+        <div className="b-example-divider"></div>
+        
         <div>
             {movies?.length > 1 ? (
                 <ul>

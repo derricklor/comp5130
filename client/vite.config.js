@@ -7,12 +7,12 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/recentlyreleased" : "http://localhost:4000",
-      "/toprated" : "http://localhost:4000",
-      "/movie/create" : "http://localhost:4000",
-      "/movie/:id" : "http://localhost:4000",
-      "/movie/:id/edit" : "http://localhost:4000",
-      "/movie/:id/delete" : "http://localhost:4000",
+      // "/api/recentlyreleased" : "http://localhost:4000",
+      // "/api/toprated" : "http://localhost:4000",
+      // "/api/movie/create" : "http://localhost:4000",
+      // "/api/movie/:id" : "http://localhost:4000",
+      // "/api/movie/:id/edit" : "http://localhost:4000",
+      // "/api/movie/:id/delete" : "http://localhost:4000",
     },
   },
 })

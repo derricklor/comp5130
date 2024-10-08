@@ -32,39 +32,45 @@ export default function Movie() {
         actors: "sample actors",
         poster: "sample poster",
       };
-    const { movie } = useLoaderData();
+    //const { movie } = useLoaderData();
 
     const {id} = useParams();
-    const [data, setData] = useState([]);
-    useEffect(() => {
-        axios.get(`/movie/:${id}`)
-        .then((res) => {
-            setData(res.data);
-        })
-        .catch((err) => console.log(err));
-    }, [id]);
+    console.log(id)
+    // const [data, setData] = useState([]);
+    // useEffect(() => {
+    //     axios.get(`/movie/:${id}`)
+    //     .then((res) => {
+    //         setData(res.data);
+    //     })
+    //     .catch((err) => console.log(err));
+    // }, [id]);
+        return (
+            <>
+            <h1>movie {id}</h1>
+            <Link to={`/movie/${id}/edit`}>edit</Link>
+            </>
+        )
+    // return (
+    //     <div id="movie_info">
+    //         <h2>{ex_movie.title}</h2>
+    //         <img src="{ex_movie.poster}" alt="movie poster" />
+    //         <p>Release date: {ex_movie.released}</p>
+    //         <p>Runtime: {ex_movie.runtime} mins</p>
+    //         <p>Director: {ex_movie.director}</p>
+    //         <p>Rating: {ex_movie.rating}</p>
+    //         <p>Genre: {ex_movie.genre}</p>
+    //         <p>Plot: {ex_movie.plot}</p>
+    //         <p>Actors: {ex_movie.actors}</p>
 
-    return (
-        <div id="movie_info">
-            <h2>{ex_movie.title}</h2>
-            <img src="{ex_movie.poster}" alt="movie poster" />
-            <p>Release date: {ex_movie.released}</p>
-            <p>Runtime: {ex_movie.runtime} mins</p>
-            <p>Director: {ex_movie.director}</p>
-            <p>Rating: {ex_movie.rating}</p>
-            <p>Genre: {ex_movie.genre}</p>
-            <p>Plot: {ex_movie.plot}</p>
-            <p>Actors: {ex_movie.actors}</p>
-
-            <Form method="post" action="destroy" onSubmit={(event) => {
-                    if (!confirm("Please confirm you want to delete this record.")) {
-                        event.preventDefault();
-                    }
-                }}
-            >
-                <button type="submit">Delete</button>
-            </Form>
-        </div>
+    //         <Form method="post" action="destroy" onSubmit={(event) => {
+    //                 if (!confirm("Please confirm you want to delete this record.")) {
+    //                     event.preventDefault();
+    //                 }
+    //             }}
+    //         >
+    //             <button type="submit">Delete</button>
+    //         </Form>
+    //     </div>
         
-    )
+    // )
 }

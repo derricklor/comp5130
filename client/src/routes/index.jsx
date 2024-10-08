@@ -2,9 +2,8 @@
 
 export default function Index() {
     return (
-      <p id="zero-state">
-        This is a demo.
-        <br />
-      </p>
+      <>
+      <h1>This is home</h1>
+      </>
     );
   }
