@@ -47,7 +47,8 @@ app.get("/api/recentlyreleased", (req, res) =>{
   // if (month < 10){ month = `0${month}`;}
   // let formattedDate = `${year}${month}00`;
   //query db
-  const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 12";
+  console.log(`${Date()}: got get request for recentlyreleased`)
+  const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 6";
   db.query( q, [], (err, result) => {
     if (err) {res.json({message: "DB recently released error"});}
     return res.json(result);
@@ -55,6 +56,7 @@ app.get("/api/recentlyreleased", (req, res) =>{
 });
 
 app.get("/api/toprated", (req, res) =>{
+  console.log(`${Date()}: got get request for toprated`)
   const q = "SELECT * FROM movies ORDER BY `rating` DESC LIMIT 12";
   db.query( q, [], (err, result) => {
     if (err) {res.json({message: "DB top rated error"});}
@@ -63,6 +65,7 @@ app.get("/api/toprated", (req, res) =>{
 });
 
 app.post("/api/movie/create", (req, res) =>{
+  console.log(`${Date()}: got post request for movie create`)
   const q = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
                          VALUES (`New`, `12345678`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
   db.query( q, [], (err, result) => {
@@ -72,8 +75,8 @@ app.post("/api/movie/create", (req, res) =>{
 });
 
 app.get("/api/movie/:id", (req, res) =>{
+  console.log(`${Date()}: got a get request for movie id: ${id}`)
   const id = req.params.id;
-  console.log(`got a get request for movie id: ${id}`)
   const q = "SELECT * FROM movies WHERE `id` = ?";
   db.query( q, id, (err, result) => {
     if (err) {res.json({message: "DB get movie error"});}
@@ -82,12 +85,13 @@ app.get("/api/movie/:id", (req, res) =>{
 });
 
 app.post("/api/movie/:id/edit", (req, res) =>{
+  console.log(`${Date()}: got a post request for edit movie id: ${id}`)
   const id = req.params.id;
-  console.log(`got a post request for edit movie id: ${id}`)
   const values = [
     req.body.title, req.body.released, req.body.runtime, req.body.director, 
     req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster ]
-  const q = `UPDATE movies SET title= ${value[0]}, released= ${value[1]}, runtime= ${value[2]}, director= ${value[3]}, rating= ${value[4]} genre= ${value[5]}, plot= ${value[6]}, actors= ${value[7]}, poster= ${value[8]} WHERE id =${id}`
+  const q = `UPDATE movies SET title= ${value[0]}, released= ${value[1]}, runtime= ${value[2]}, director= ${value[3]},\
+           rating= ${value[4]} genre= ${value[5]}, plot= ${value[6]}, actors= ${value[7]}, poster= ${value[8]} WHERE id =${id}`
   db.query(q, values, (err, result) =>{
     if (err) return res.json({message: "Movie edit error: " +err})
     return res.json(result);
@@ -95,6 +99,7 @@ app.post("/api/movie/:id/edit", (req, res) =>{
 });
 
 app.post("/api/movie/:id/delete", (req, res) =>{
+  console.log(`${Date()}: got a post request for delete movie id: ${id}`)
   const id = req.params.id;
   const q = "DELETE FROM movies WHERE `id`= ?"
   db.query( q, id, (err, result) => {
