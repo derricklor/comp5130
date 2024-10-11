@@ -5,7 +5,7 @@ import {
     Routes,
     Route,
     Link,
-  } from "react-router-dom";
+} from "react-router-dom";
 
 
 import Index from "./routes/index";
@@ -18,9 +18,9 @@ import { action as deleteAction } from "./routes/delete";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    
+
     <BrowserRouter>
-        
+
         <nav className="navbar navbar-expand-lg">
             <div className="container-fluid">
                 <Link className="navbar-brand" to="/">MovieDB</Link>
@@ -63,17 +63,17 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </nav>
 
         <Routes>
-            <Route path="/" element={<Index/>} />
-            <Route path="/recentlyreleased" element={<RecentlyReleased/>} />
-            <Route path="/toprated" element={<TopRated/>} />
-            <Route path="/movie/:id" element={<Movie/>} />
+            <Route path="/" element={<Index />} />
+            <Route path="/recentlyreleased" element={<RecentlyReleased />} />
+            <Route path="/toprated" element={<TopRated />} />
+            <Route path="/movie/:id" element={<Movie />} />
             <Route path="/movie/:id/edit" element={<EditMovie />} />
             <Route path="/movie/:id/delete" action={deleteAction} />
-            <Route path="/movie/*" element={<Index/>} />
+            <Route path="/movie/*" element={<Index />} />
             <Route path="*" element={<ErrorPage />} />
         </Routes>
     </BrowserRouter>
-   
-  );
 
-  //Make movie/:id pass the movie json to movie/:id/edit, then edit will post changes to server
+);
+
+//Make movie/:id pass the movie json to movie/:id/edit, then edit will post changes to server
