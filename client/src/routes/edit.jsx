@@ -1,5 +1,6 @@
-import { Form, useLoaderData, redirect, useNavigate } from "react-router-dom"
+import React, { useEffect, useState } from "react";
 import axios from "axios"
+import { Form, useLoaderData, redirect, useNavigate } from "react-router-dom"
 
 
 export async function updateMovie(id, updates) {
@@ -19,64 +20,97 @@ export async function action({ request, params }) {
 
 export default function EditMovie() {
     const navigate = useNavigate();
-    //const { movie } = useLoaderData();
-    const exmovie = {
-        title: "sample title",
-        released: 55556677,
-        runtime: 5,
-        director: "sample director",
-        id: 5,
-        rating: 5.0,
-        genre: "sample genre",
-        plot: "sample plot",
-        actors: "sample actors",
-        poster: "sample poster",
-    };
+    const { id } = useParams();
+    const [singleMovie, setSingleMovie] = useState([])
+    useEffect(() => {
+        axios.get(`http://localhost:4000/api/movie/${id}`)
+            .then((res) => {
+                setSingleMovie(res.data)
+            })
+            .catch((err) => console.log(err))
+    }, [])
+
     // <Form> for router
     return (
         <>
             <form method="post" id="movie-form">
-                <p>
+                <label>
                     <span>Title</span>
-                    <input type="text" name="title" placeholder="Title" defaultValue={exmovie.title} />
-                </p>
+                    <input type="text" id="form-title" name="title" placeholder="Title" defaultValue={singleMovie[0].title} maxLength={255} required/>
+                </label>
                 <label>
                     <span>Released</span>
-                    <input type="number" name="released" placeholder="YYYYMMDD" defaultValue={exmovie.released} />
+                    <input type="number" id="form-released" name="released" placeholder="YYYYMMDD" defaultValue={singleMovie[0].released} min={17000101} max={20991231} required/>
                 </label>
                 <label>
                     <span>Runtime</span>
-                    <input type="number" name="runtime" placeholder="# in minutes" defaultValue={exmovie.runtime} />
+                    <input type="number" id="form-runtime" name="runtime" placeholder="# in minutes" defaultValue={singleMovie[0].runtime} min={0} max={999}/>
                 </label>
                 <label>
                     <span>Director</span>
-                    <input type="text" name="director" placeholder="director name" defaultValue={exmovie.director} />
+                    <input type="text" id="form-director" name="director" placeholder="director name" defaultValue={singleMovie[0].director} maxLength={255}/>
                 </label>
                 <label>
                     <span>Rating</span>
-                    <input type="number" name="rating" placeholder="0.0-10.0" defaultValue={exmovie.rating} />
+                    <input type="number" id="form-rating" name="rating" placeholder="0.0 to 10.0" defaultValue={singleMovie[0].rating} min={0} max={10}/>
                 </label>
                 <label>
                     <span>Genre</span>
-                    <input type="text" name="plot" placeholder="less than 255 chars" defaultValue={exmovie.genre} />
+                    <input type="text" id="form-plot" name="plot" placeholder="less than 255 chars" defaultValue={singleMovie[0].genre} maxLength={255}/>
                 </label>
                 <label>
                     <span>Plot</span>
-                    <textarea name="plot" placeholder="less than 255 chars" defaultValue={exmovie.plot} rows={3} />
+                    <textarea id="form-plot" name="plot" placeholder="less than 255 chars" defaultValue={singleMovie[0].plot} rows={3} maxLength={255}/>
                 </label>
                 <label>
                     <span>Actors</span>
-                    <input type="text" name="actors" placeholder="less than 255 chars" defaultValue={exmovie.actors} />
+                    <input type="text" id="form-actors" name="actors" placeholder="less than 255 chars" defaultValue={singleMovie[0].actors} maxLength={255}/>
                 </label>
                 <label>
                     <span>Poster URL</span>
-                    <input type="text" name="poster" placeholder="less than 255 chars" defaultValue={exmovie.poster} />
+                    <input type="text" id="form-poster" name="poster" placeholder="less than 255 chars" defaultValue={singleMovie[0].poster} maxLength={255}/>
                 </label>
                 <p>
-                    <button type="submit">Save</button>
+                    <button type="submit" id="form-submit">Save</button>
                     <button type="button" onClick={() => { navigate(-1); }}>Cancel</button>
                 </p>
             </form>
         </>
     );
 }
+let validTitle = false;
+let validReleased = false;
+function validateTitle(event){
+    let widget = document.getElementById("form-title");
+    if (event.target.value.length < 1){
+        validTitle = false;
+        widget.style.backgroundColor = "$danger";
+    } else {
+        validTitle = true;
+        widget.style.backgroundColor = "$success";
+    }
+}
+function validateReleased(event){
+    let widget = document.getElementById("form-released");
+    if (event.target.value.length != 8){
+        validReleased = false;
+        widget.style.backgroundColor = "$danger";
+    } else {
+        validReleased = true;
+        widget.style.backgroundColor = "$success";
+    }
+}
+
+document.getElementById("form-title").addEventListener("input", validateTitle)
+document.getElementById("form-released").addEventListener("input", validateReleased)
+
+function validateForm(event){
+    if (!validTitle || !validReleased){
+        event.preventDefault();
+        console.log("One or more fields are invalid.")
+    } else {
+        console.log("Submitted valid form.")
+    }
+}
+
+document.getElementById("form-submit").addEventListener("submit", validateForm)

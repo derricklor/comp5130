@@ -14,16 +14,6 @@ export default function Movie() {
             .catch((err) => console.log(err))
     }, [])
 
-    // const ex_movie = {
-    //     title: "sample title", released: 55556677,
-    //     runtime: 5, director: "sample director",
-    //     id: 5, rating: 5.0,
-    //     genre: "sample genre", plot: "sample plot",
-    //     actors: "sample actors", poster: "sample poster",
-    //   };
-    //const { movie } = useLoaderData();
-
-    //Make movie/:id pass the movie json to movie/:id/edit, then edit will post changes to server
     return (
         <>
 
