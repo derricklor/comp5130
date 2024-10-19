@@ -2,21 +2,27 @@ import React, { useEffect, useState } from "react";
 import axios from "axios"
 import { Form, useLoaderData, redirect, useNavigate } from "react-router-dom"
 
+function updateMovie(id) {
+    //get form data
 
-export async function updateMovie(id, updates) {
+    //put into array of
+
     axios.post(`/movie/${id}/edit`, updates)
         .then((res) => {
             console.log(res);
         })
         .catch((err) => console.log(err))
-}
 
-export async function action({ request, params }) {
-    const formData = await request.formData();
-    const updates = Object.fromEntries(formData);
-    await updateMovie(params.id, updates);
+
     return redirect(`/movie/${params.id}`);
 }
+
+// export async function action({ request, params }) {
+//     const formData = await request.formData();
+//     const updates = Object.fromEntries(formData);
+//     await updateMovie(params.id, updates);
+//     return redirect(`/movie/${params.id}`);
+// }
 
 export default function EditMovie() {
     const navigate = useNavigate();
@@ -33,7 +39,7 @@ export default function EditMovie() {
     // <Form> for router
     return (
         <>
-            <form method="post" id="movie-form">
+            <form method="post" id="movie-form" action={`http://localhost:4000/api/movie/${id}/edit`}>
                 <label>
                     <span>Title</span>
                     <input type="text" id="form-title" name="title" placeholder="Title" defaultValue={singleMovie[0].title} maxLength={255} required/>
@@ -111,6 +117,7 @@ function validateForm(event){
     } else {
         console.log("Submitted valid form.")
     }
+    //updateMovie(id)
 }
 
 document.getElementById("form-submit").addEventListener("submit", validateForm)

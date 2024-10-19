@@ -8,25 +8,41 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-
-  
-  server:
+  client:
     build:
-      context: .
+      context: ./
     environment:
       NODE_ENV: production
+    command: npm run dev
     ports:
       - 3000:3000
-    networks:
-      - back
     develop:
       watch:
         - action: sync
           path: .
-          target: /usr/src/app
+          target: /code/client
+    networks:
+      - frontend
+
+  server:
+    build:
+      context: ./
+    environment:
+      NODE_ENV: production
+    command: npm run dev
+    ports:
+      - 4000:4000
+    networks:
+      - frontend
+      - backend
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /code/server
     depends_on:
-          mysql:
-            condition: service_healthy
+      mysql:
+        condition: service_healthy
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
@@ -43,11 +59,12 @@ services:
 #     secrets:
 #       - db-password
     networks:
-      - back
+      - backend
     volumes:
-      - db-data:/var/lib/sql/data
+      - db-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: '' # TODO: Change this
+      MYSQL_DATABASE: moviedb
+      MYSQL_ROOT_PASSWORD: 'secretpassword' # or use password file
       MYSQL_USER: 'root'
       MYSQL_PASS: ''
     healthcheck:
@@ -63,5 +80,5 @@ volumes:
 
 networks:
   # The presence of these objects is sufficient to define them
-  front: {}
-  back: {}
+  frontend: 
+  backend: 
