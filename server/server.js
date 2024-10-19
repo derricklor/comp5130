@@ -75,8 +75,8 @@ app.post("/api/movie/create", (req, res) => {
 });
 
 app.get("/api/movie/:id", (req, res) => {
-  console.log(`${Date()}: got a get request for movie id: ${id}`)
   const id = req.params.id;
+  console.log(`${Date()}: got a get request for movie id: ${id}`)
   const q = "SELECT * FROM movies WHERE `id` = ?";
   db.query(q, id, (err, result) => {
     if (err) { res.json({ message: "DB get movie error" }); }
@@ -84,9 +84,9 @@ app.get("/api/movie/:id", (req, res) => {
   });
 });
 
-app.post("/api/movie/:id/edit", (req, res) => {
-  console.log(`${Date()}: got a post request for edit movie id: ${id}`)
+app.post("/api/movie/:id/update", (req, res) => {
   const id = req.params.id;
+  console.log(`${Date()}: got a post request for update movie id: ${id}`)
   const values = [
     req.body.title, req.body.released, req.body.runtime, req.body.director,
     req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster]
@@ -99,8 +99,8 @@ app.post("/api/movie/:id/edit", (req, res) => {
 });
 
 app.post("/api/movie/:id/delete", (req, res) => {
-  console.log(`${Date()}: got a post request for delete movie id: ${id}`)
   const id = req.params.id;
+  console.log(`${Date()}: got a post request for delete movie id: ${id}`)
   const q = "DELETE FROM movies WHERE `id`= ?"
   db.query(q, id, (err, result) => {
     if (err) { res.json({ message: "Movie delete error: " + err }); }

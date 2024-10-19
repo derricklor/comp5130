@@ -29,15 +29,8 @@ export default function Movie() {
                         <p>Genre: {movie.genre}</p>
                         <p>Plot: {movie.plot}</p>
                         <p>Actors: {movie.actors}</p>
-                        <Link to={`http://localhost:4000/api/movie/${id}/edit`}>edit</Link>
-                        <form method="post" action="destroy" onSubmit={(event) => {
-                            if (!confirm("Please confirm you want to delete this record.")) {
-                                event.preventDefault();
-                            }
-                        }}
-                        >
-                            <button type="submit">Delete</button>
-                        </form>
+                        <Link to={`http://localhost:3000/movie/${id}/edit`}>edit</Link>
+                        
                     </div>
                 )) : (
                     <p>Could not get data.</p>

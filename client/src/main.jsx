@@ -69,11 +69,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="/movie/:id" element={<Movie />} />
             <Route path="/movie/:id/edit" element={<EditMovie />} />
             <Route path="/movie/:id/delete" action={deleteAction} />
-            <Route path="/movie/*" element={<Index />} />
+            
             <Route path="*" element={<ErrorPage />} />
         </Routes>
     </BrowserRouter>
 
 );
-
+//<Route path="/movie/*" element={<Index />} />
 //Make movie/:id pass the movie json to movie/:id/edit, then edit will post changes to server
