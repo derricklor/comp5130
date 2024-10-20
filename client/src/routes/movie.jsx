@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
+import { releasedToString } from "./dateFormat";
 
 
 export default function Movie() {
@@ -16,26 +17,35 @@ export default function Movie() {
 
     return (
         <>
+            <div className="row g-1 p-1">
+                <div className="col-2"></div>
+                <div className="col-8">
+                    <div className="row">
+                        {singleMovie?.length > 0 ?
+                            singleMovie.map((movie) => (
+                                <div id="movieInfo" key={movie.id}>
+                                    <h1>{movie.title}</h1>
+                                    <img src={movie.poster} alt="movie poster" />
+                                    <p>Release date: {releasedToString(movie.released)}</p>
+                                    <p>Runtime: {movie.runtime} mins</p>
+                                    <p>Director: {movie.director}</p>
+                                    <p>Rating: {movie.rating}</p>
+                                    <p>Genre: {movie.genre}</p>
+                                    <p>Plot: {movie.plot}</p>
+                                    <p>Actors: {movie.actors}</p>
+                                    <Link to={`http://localhost:3000/movie/${id}/edit`}>
+                                        <button className="btn btn-primary">Edit</button>
+                                    </Link>
 
-            {singleMovie?.length > 0 ?
-                singleMovie.map((movie) => (
-                    <div id="movieInfo" key={movie.id}>
-                        <h2>{movie.title}</h2>
-                        <img src={movie.poster} alt="movie poster" />
-                        <p>Release date: {movie.released}</p>
-                        <p>Runtime: {movie.runtime} mins</p>
-                        <p>Director: {movie.director}</p>
-                        <p>Rating: {movie.rating}</p>
-                        <p>Genre: {movie.genre}</p>
-                        <p>Plot: {movie.plot}</p>
-                        <p>Actors: {movie.actors}</p>
-                        <Link to={`http://localhost:3000/movie/${id}/edit`}>edit</Link>
-                        
+                                </div>
+                            )) : (
+                                <p>Could not get data.</p>
+                            )
+                        }
                     </div>
-                )) : (
-                    <p>Could not get data.</p>
-                )
-            }
+                </div>
+                <div className="col-2"></div>
+            </div>
         </>
     )
 }

@@ -15,36 +15,42 @@ export default function RecentlyReleased() {
 
     return (
         <>
-            <h1>Recently Released</h1>
-            <div className="row row-cols-sm-1 row-cols-md-2 row-cols-xl-3 g-1">
-                {movieList?.length > 1 ?
-                    movieList.map((movie) => (
-                        <div className="card mb-3" key={movie.id} style={{ maxWidth: 520 }}>
-                            <div className="row g-0 ">
-                                <div className="col-sm-12 col-md-4">
-                                    <Link to={`http://localhost:3000/movie/${movie.id}`}>
-                                        <img src={movie.poster} className="img-fluid rounded-start " alt={`${movie.title} poster`} />
-                                    </Link>
-                                </div>
-                                <div className="col-sm-4 col-md-8">
-                                    <div className="card-body">
-                                        <h5 className="card-title">{movie.title}</h5>
-                                        <span>{movie.rating}/10</span>
-                                        <p className="card-text">
-                                            {movie.plot}
-                                        </p>
-                                        <p className="card-text">
-                                            <small className="text-body-secondary">Released: {movie.released}</small>
-                                        </p>
+            <div className="row g-1 p-1">
+                <div className="col-1"></div>
+                <div className="col-10">
+                    <div className="row">
+                        <h1 className="m-4 text-start">Recently Released</h1>
+                        {movieList?.length > 1 ?
+                            movieList.map((movie) => (
+                                <div className="card m-2" key={movie.id} style={{ maxWidth: 520 }}>
+                                    <div className="row g-0">
+                                        <div className="col-sm-12 col-md-4">
+                                            <Link to={`http://localhost:3000/movie/${movie.id}`}>
+                                                <img src={movie.poster} className="img-fluid rounded-start " alt={`${movie.title} poster`} />
+                                            </Link>
+                                        </div>
+                                        <div className="col-sm-4 col-md-8">
+                                            <div className="card-body">
+                                                <h5 className="card-title">{movie.title}</h5>
+                                                <span>{movie.rating}/10</span>
+                                                <p className="card-text">
+                                                    {movie.plot}
+                                                </p>
+                                                <p className="card-text">
+                                                    <small className="text-body-secondary">Released: {movie.released}</small>
+                                                </p>
 
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    )) : (
-                        <p>Could not get data.</p>
-                    )
-                }
+                            )) : (
+                                <p>Could not get data.</p>
+                            )
+                        }
+                    </div>
+                </div>
+                <div className="col-1"></div>
             </div>
         </>
     )
