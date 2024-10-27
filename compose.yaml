@@ -11,6 +11,7 @@ services:
   client:
     build:
       context: ./
+      target: client-develop
     environment:
       NODE_ENV: production
     command: npm run dev
@@ -18,15 +19,18 @@ services:
       - 3000:3000
     develop:
       watch:
-        - action: sync
-          path: .
-          target: /code/client
+      - path: ./client/src
+        action: sync
+        target: /usr/local/app/src
+      - path: ./client/package.json
+        action: rebuild
     networks:
       - frontend
 
   server:
     build:
       context: ./
+      target: server-develop
     environment:
       NODE_ENV: production
     command: npm run dev
@@ -37,9 +41,11 @@ services:
       - backend
     develop:
       watch:
-        - action: sync
-          path: .
-          target: /code/server
+      - path: ./server
+        action: sync
+        target: /usr/local/app/src #src not correct
+      - path: ./server/package.json
+        action: rebuild
     depends_on:
       mysql:
         condition: service_healthy

@@ -4,6 +4,7 @@
   "description": "A simple web server",
   "main": "server.js",
   "dependencies": {
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "events": "^3.3.0",
     "express": "^4.21.0",

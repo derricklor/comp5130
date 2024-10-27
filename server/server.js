@@ -2,10 +2,19 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
-const path = require("path");
+//const path = require("path");
+const https = require("https");
+const fs = require("fs");
+const bodyParser = require("body-parser");
 
 const app = express();
-const port = 4000;
+const PORT = 4000;
+
+// Middleware functions
+app.use(cors());
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Connect to db
 const db = mysql.createConnection({
@@ -19,10 +28,16 @@ const db = mysql.createConnection({
 // Serve static files from the public dir
 //app.use(express.static(path.join(__dirname,"public")));
 
+//test post request
+app.post("/api/mssg", (req, res) => {
+  console.log("Got a mssg")
+  // Logging the form body
+  //console.log(req.headers);
+  console.log(req.body);
 
-// Middleware functions
-app.use(cors());
-app.use(express.json());
+  // Redirecting to the root
+  res.redirect("http://localhost:3000/");
+});
 
 app.get("/api/home", (req, res) => {
   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 4";
@@ -134,9 +149,20 @@ app.post('/', function(req, res, next) {
 });
 */
 
+// Creating object of key and certificate for SSL
+const options = {
+  key: fs.readFileSync("server.key"),
+  cert: fs.readFileSync("server.cert"),
+};
 
-// Start the web server
-app.listen(port, function () {
+
+// Creating https server by passing options and app object
+// https.createServer(options, app)
+//   .listen(PORT, function (req, res) {
+//     console.log(`Server started at PORT ${PORT}`);
+//   });
+
+app.listen(PORT, function () {
   // Instead of hard coding port, could change port number to be .env variable
-  console.log(`Listening on port ${port}...`);
+  console.log(`Listening on port ${PORT}...`);
 });

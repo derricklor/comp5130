@@ -26,5 +26,5 @@ USER node
 COPY . /code/client
 
 # Run the application.
-# auto runs the script 'dev' in package.json
-CMD npm run dev
+# auto runs the script 'start' in package.json
+CMD npm run start
