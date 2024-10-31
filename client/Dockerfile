@@ -1,22 +1,21 @@
 # syntax=docker/dockerfile:1
-
+# client Dockerfile
 ARG NODE_VERSION=20.12.2
 
 FROM node:${NODE_VERSION}-alpine
 
-
-ENV NODE_ENV production
 ENV PORT=3000
 
-# Expose the port that the application listens on.
+# Expose the port that the clien listens on.
 EXPOSE 3000
 
-WORKDIR /code/client
+# define the context of the container
+WORKDIR /usr/local/app
 
-# install dependencies
+# copy files into container at destination WORKDIR+/
 COPY package.json /code/server/package.json
 COPY package-lock.json /code/server/package-lock.json
-# Clean install with npm
+# Clean install dependencies with npm
 RUN npm install
 
 # Run the application as a non-root user.

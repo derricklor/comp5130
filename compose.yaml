@@ -10,11 +10,11 @@
 services:
   client:
     build:
-      context: ./
+      context: client
       target: client-develop
     environment:
-      NODE_ENV: production
-    command: npm run dev
+      NODE_ENV: development
+    command: npm run start
     ports:
       - 3000:3000
     develop:
@@ -26,14 +26,16 @@ services:
         action: rebuild
     networks:
       - frontend
+    depends_on:
+      - server
 
   server:
     build:
-      context: ./
+      context: server
       target: server-develop
     environment:
-      NODE_ENV: production
-    command: npm run dev
+      NODE_ENV: development
+    command: npm run start
     ports:
       - 4000:4000
     networks:
@@ -41,17 +43,15 @@ services:
       - backend
     develop:
       watch:
-      - path: ./server
+      - path: ./server/server.js
         action: sync
-        target: /usr/local/app/src #src not correct
+        target: /usr/local/app/src #
       - path: ./server/package.json
         action: rebuild
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
 
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
+# `depends_on` tells Docker Compose to
 # start the database before your application. The `db-data` volume persists the
 # database data between container restarts. The `db-password` secret is used
 # to set the database password. You must create `db/password.txt` and add
@@ -59,7 +59,7 @@ services:
     
   mysql:
     image: mysql
-    restart: unless-stopped
+    restart: always #unless-stopped
     command: --default-authentication-plugin=mysql_native_password
 #     user: postgres
 #     secrets:
@@ -67,17 +67,18 @@ services:
     networks:
       - backend
     volumes:
-      - db-data:/var/lib/mysql
+      - db-data:/var/lib/mysql # default location defined by mysql
     environment:
       MYSQL_DATABASE: moviedb
-      MYSQL_ROOT_PASSWORD: 'secretpassword' # or use password file
-      MYSQL_USER: 'root'
-      MYSQL_PASS: ''
-    healthcheck:
-      test: [ "CMD", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      MYSQL_ROOT_PASSWORD: 'secretpassword' # or use password file and put in dockerignore list
+      # MYSQL_USER: 'user' # by default creates root user and root pass
+      # MYSQL_PASS: ''
+    # healthcheck:
+    #   test: [ "CMD", "pg_isready" ]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+
 volumes:
   db-data:
 # secrets:

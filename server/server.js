@@ -42,7 +42,7 @@ app.post("/api/mssg", (req, res) => {
 app.get("/api/home", (req, res) => {
   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 4";
   db.query(q, [], (err, result) => {
-    if (err) { res.json({ message: "DB home error" }); }
+    if (err) { res.json({ error: "DB home error" }); }
     return res.json(result);
   });
 });
@@ -65,7 +65,7 @@ app.get("/api/recentlyreleased", (req, res) => {
   console.log(`${Date()}: got get request for recentlyreleased`)
   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 6";
   db.query(q, [], (err, result) => {
-    if (err) { res.json({ message: "DB recently released error" }); }
+    if (err) { res.json({ error: "DB recently released error" }); }
     return res.json(result);
   });
 });
@@ -74,7 +74,7 @@ app.get("/api/toprated", (req, res) => {
   console.log(`${Date()}: got get request for toprated`)
   const q = "SELECT * FROM movies ORDER BY `rating` DESC LIMIT 12";
   db.query(q, [], (err, result) => {
-    if (err) { res.json({ message: "DB top rated error" }); }
+    if (err) { res.json({ error: "DB top rated error" }); }
     return res.json(result);
   });
 });
@@ -84,7 +84,7 @@ app.post("/api/movie/create", (req, res) => {
   const q = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
                          VALUES (`New`, `12345678`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
   db.query(q, [], (err, result) => {
-    if (err) { res.json({ message: "DB create movie error" }); }
+    if (err) { res.json({ error: "DB create movie error" }); }
     return res.json(result);
   });
 });
@@ -94,7 +94,7 @@ app.get("/api/movie/:id", (req, res) => {
   console.log(`${Date()}: got a get request for movie id: ${id}`)
   const q = "SELECT * FROM movies WHERE `id` = ?";
   db.query(q, id, (err, result) => {
-    if (err) { res.json({ message: "DB get movie error" }); }
+    if (err) { res.json({ error: "DB get movie error" }); }
     return res.json(result);
   });
 });
@@ -102,15 +102,17 @@ app.get("/api/movie/:id", (req, res) => {
 app.post("/api/movie/:id/update", (req, res) => {
   const id = req.params.id;
   console.log(`${Date()}: got a post request for update movie id: ${id}`)
-  const values = [
-    req.body.title, req.body.released, req.body.runtime, req.body.director,
-    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster]
-  const q = `UPDATE movies SET title= ${value[0]}, released= ${value[1]}, runtime= ${value[2]}, director= ${value[3]},\
-           rating= ${value[4]} genre= ${value[5]}, plot= ${value[6]}, actors= ${value[7]}, poster= ${value[8]} WHERE id =${id}`
-  db.query(q, values, (err, result) => {
-    if (err) return res.json({ message: "Movie edit error: " + err })
-    return res.json(result);
-  })
+  console.log(req.body)
+  // const value = [
+  //   req.body.title, req.body.released, req.body.runtime, req.body.director,
+  //   req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster]
+  // const q = `UPDATE movies SET title= ${value[0]}, released= ${value[1]}, runtime= ${value[2]}, director= ${value[3]},\
+  //          rating= ${value[4]} genre= ${value[5]}, plot= ${value[6]}, actors= ${value[7]}, poster= ${value[8]} WHERE id =${id}`
+  // db.query(q, [], (err, result) => {
+  //   if (err) return res.json({ error: "Movie edit error: " + err })
+  //   return res.json(result);
+  // })
+  return res.json({ success: "true" })
 });
 
 app.post("/api/movie/:id/delete", (req, res) => {
@@ -118,7 +120,7 @@ app.post("/api/movie/:id/delete", (req, res) => {
   console.log(`${Date()}: got a post request for delete movie id: ${id}`)
   const q = "DELETE FROM movies WHERE `id`= ?"
   db.query(q, id, (err, result) => {
-    if (err) { res.json({ message: "Movie delete error: " + err }); }
+    if (err) { res.json({ error: "Movie delete error: " + err }); }
     return res.json(result);
   });
 });
@@ -128,7 +130,7 @@ app.post("/api/movie/:id/delete", (req, res) => {
 //   const id = req.params.id;
 //   const q = "SELECT * FROM people WHERE `id` = ?";
 //   db.query( q, [id], (err, result) => {
-//     if (err) {res.json({message: "DB people error"});}
+//     if (err) {res.json({error: "DB people error"});}
 //     return res.json(result);
 //   });
 // });

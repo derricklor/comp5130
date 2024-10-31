@@ -47,7 +47,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                             <Link className="nav-link disabled">List</Link>
                         </li>
                     </ul>
-                    <form className="d-flex" role="search">
+                    <form className="d-flex" role="search" id="search">
                         <input
                             className="form-control me-2"
                             type="search"
