@@ -4,15 +4,15 @@ import { Form, useParams, redirect, useNavigate } from "react-router-dom"
 
 
 
-function deleteMovie(id) {
-    axios.post(`http://localhost:4000/api/movie/${id}/delete`)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err))
+// function deleteMovie(id) {
+//     axios.post(`http://localhost:4000/api/movie/${id}/delete`)
+//       .then((res) => {
+//         console.log(res);
+//       })
+//       .catch((err) => console.log(err))
   
-    return redirect("/");
-  }
+//     return redirect("/");
+//   }
 
 // Validates the form, returns true if everything is valid.
 // If false, then shows where validator failed, returns false.
@@ -72,18 +72,41 @@ export default function EditMovie() {
         // send the post request to server
         axios.post(`http://localhost:4000/api/movie/${id}/update`, myUpdates)
             .then((res) => {
-                console.log(res);
-                
                 if (res.data.error){
-                    alert("Failed")
+                    alert(`${res.data.error}`)
                 } else {
-                    alert("Success")
+                    alert(`${res.data.message}`)
                 }
             })
             .catch((err) => {
                 console.log(err)
             })
         //return redirect(`/movie/${id}`);
+    }
+
+    // Define an inner function for deleting movies, when delete button is confirmed.
+    // This inner function has access to outer function's variables.
+    function deleteMovie(e) {
+        e.preventDefault();//prevent form submit
+        //get hashed key from session storage
+        let key = sessionStorage.getItem("sessionKey")
+        if (key == null){
+            alert("Permission denied.")
+            return
+        }
+        // send the post delete request to server with json obj
+        axios.post(`http://localhost:4000/api/movie/${id}/delete`, {hashKey: key})
+            .then((res) => {
+                if (res.data.error){
+                    alert(`${res.data.error}`)
+                } else {
+                    alert(`${res.data.message}`)
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        return redirect(`/`);
     }
 
     // <Form> for router
@@ -169,7 +192,7 @@ export default function EditMovie() {
                                                     if (!confirm("Confirm you want to delete this movie.")) {
                                                         event.preventDefault();//prevent form submit if cancel
                                                     } else {
-                                                        deleteMovie(id);//run delete function
+                                                        deleteMovie(event);//run delete function for current movie displayed
                                                     }
                                                 }}>Delete</button>
                                             </div>

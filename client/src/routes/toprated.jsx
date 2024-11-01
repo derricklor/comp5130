@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { releasedToString } from "./dateFormat"
 
 export default function TopRated() {
     
@@ -39,7 +38,7 @@ export default function TopRated() {
                                                     {movie.plot}
                                                 </p>
                                                 <p className="card-text">
-                                                    <small className="text-body-secondary">Released: {releasedToString(movie.released)}</small>
+                                                    <small className="text-body-secondary">Released: {movie.released}</small>
                                                 </p>
 
                                             </div>

@@ -82,7 +82,7 @@ app.get("/api/toprated", (req, res) => {
 app.post("/api/movie/create", (req, res) => {
   console.log(`${Date()}: got post request for movie create`)
   const q = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
-                         VALUES (`New`, `12345678`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
+                         VALUES (`New`, `yyyy-mm-dd`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
   db.query(q, [], (err, result) => {
     if (err) { res.json({ error: "DB create movie error" }); }
     return res.json(result);
@@ -102,54 +102,46 @@ app.get("/api/movie/:id", (req, res) => {
 app.post("/api/movie/:id/update", (req, res) => {
   const id = req.params.id;
   console.log(`${Date()}: got a post request for update movie id: ${id}`)
-  console.log(req.body)
-  // const value = [
-  //   req.body.title, req.body.released, req.body.runtime, req.body.director,
-  //   req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster]
-  // const q = `UPDATE movies SET title= ${value[0]}, released= ${value[1]}, runtime= ${value[2]}, director= ${value[3]},\
-  //          rating= ${value[4]} genre= ${value[5]}, plot= ${value[6]}, actors= ${value[7]}, poster= ${value[8]} WHERE id =${id}`
-  // db.query(q, [], (err, result) => {
-  //   if (err) return res.json({ error: "Movie edit error: " + err })
-  //   return res.json(result);
-  // })
-  return res.json({ success: "true" })
+  //console.log(req.body)
+  try{
+    const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
+    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
+  } catch (err){
+    return res.json({ error: "Form error."})
+  }
+  const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
+    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
+  const q = "UPDATE movies SET `title`=?, `released`=?, `runtime`=?, `director`=?, `rating`=?, `genre`=?, `plot`=?, `actors`=?, `poster`=? WHERE id=?"
+  db.query(q, value, (err, result) => {
+    if (err) { console.log(err); return res.json({ error: "Movie edit error."}); }
+    //console.log(result) //debug
+    //return res.json(result);
+    return res.json({ success: "true" , message: "Movie update success."})
+  })
 });
 
 app.post("/api/movie/:id/delete", (req, res) => {
   const id = req.params.id;
   console.log(`${Date()}: got a post request for delete movie id: ${id}`)
-  const q = "DELETE FROM movies WHERE `id`= ?"
-  db.query(q, id, (err, result) => {
+  let hashKey;
+  try{
+    hashKey = req.body.hashKey //check authentication key from body
+  } catch (err){
+    return res.json({ error: "Permission denied."})
+  }
+  const qk = "SELECT `admin` FROM `users` WHERE `hash`=?"
+  db.query(q, hashKey, (err, result) => {
+    if (err) { console.log(err); return res.json({ error: "Permission denied."}); }
+    //continue if va
+  });
+  //
+  const qd = "DELETE FROM movies WHERE `id`= ?"
+  db.query(qd, id, (err, result) => {
     if (err) { res.json({ error: "Movie delete error: " + err }); }
-    return res.json(result);
+    return res.json({ success: "true" , message: "Movie delete success."});
   });
 });
 
-// deprecated
-// app.get("/people/:id", (req, res) =>{
-//   const id = req.params.id;
-//   const q = "SELECT * FROM people WHERE `id` = ?";
-//   db.query( q, [id], (err, result) => {
-//     if (err) {res.json({error: "DB people error"});}
-//     return res.json(result);
-//   });
-// });
-
-/* // enable CORS in express https://enable-cors.org/server_expressjs.html
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // update to match the domain you will make the request from
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
-app.get('/', function(req, res, next) {
-  // Handle the get for this route
-});
-
-app.post('/', function(req, res, next) {
- // Handle the post for this route
-});
-*/
 
 // Creating object of key and certificate for SSL
 const options = {
@@ -161,10 +153,26 @@ const options = {
 // Creating https server by passing options and app object
 // https.createServer(options, app)
 //   .listen(PORT, function (req, res) {
-//     console.log(`Server started at PORT ${PORT}`);
-//   });
-
-app.listen(PORT, function () {
-  // Instead of hard coding port, could change port number to be .env variable
-  console.log(`Listening on port ${PORT}...`);
-});
+  //     console.log(`Server started at PORT ${PORT}`);
+  //   });
+  
+  app.listen(PORT, function () {
+    // Instead of hard coding port, could change port number to be .env variable
+    console.log(`Listening on port ${PORT}...`);
+  });
+  
+  /* // enable CORS in express https://enable-cors.org/server_expressjs.html
+  app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+  
+  app.get('/', function(req, res, next) {
+    // Handle the get for this route
+  });
+  
+  app.post('/', function(req, res, next) {
+   // Handle the post for this route
+  });
+  */

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
-import { releasedToString } from "./dateFormat";
 
 
 export default function Movie() {
@@ -26,7 +25,7 @@ export default function Movie() {
                                 <div id="movieInfo" key={movie.id}>
                                     <h1>{movie.title}</h1>
                                     <img src={movie.poster} alt="movie poster" />
-                                    <p>Release date: {releasedToString(movie.released)}</p>
+                                    <p>Release date: {movie.released}</p>
                                     <p>Runtime: {movie.runtime} mins</p>
                                     <p>Director: {movie.director}</p>
                                     <p>Rating: {movie.rating}</p>
