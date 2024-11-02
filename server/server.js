@@ -8,6 +8,7 @@ const fs = require("fs");
 const bodyParser = require("body-parser");  // for parsing requests
 const jwt = require("jwt-simple");          // for json web tokens
 const secret = "supersecret";               // Secret used to encode/decode JWTs
+const bcrypt = require("bcryptjs");         // for salting and hashing passwords
 
 const app = express();
 const PORT = 4000;
@@ -118,7 +119,9 @@ app.post("/api/movie/:id/update", (req, res) => {
     if (err) { console.log(err); return res.status(401).json({ error: "Movie edit error."}); }
     //console.log(result) //debug
     //return res.json(result);
-    return res.json({ message: "Movie update success."})
+    else {
+      return res.json({ message: "Movie update success."})
+    }
   })
 });
 
@@ -139,69 +142,66 @@ app.post("/api/movie/:id/delete", (req, res) => {
   //
   const qd = "DELETE FROM movies WHERE `id`= ?"
   db.query(qd, id, (err, result) => {
-    if (err) { res.status(401).json({ error: "Movie delete error: " + err }); }
-    return res.json({ success: "true" , message: "Movie delete success."});
+    if (err) { console.log(err); return res.status(401).json({ error: "Movie delete error: " + err }); }
+    else {
+      return res.json({ message: "Movie delete success."});
+    }
   });
 });
 
 
 /***********Registration***********/
-app.post("/registration", (req, res) => {
+app.post("api/registration", (req, res) => {
   // check if email and password is POSTED
   if (!req.body.email || !req.body.password ) {
-    return res.status(406).json({ error: "Bad email/password" }); 
+    return res.status(400).json({ error: "Missing email/password" }); 
   } 
   // Check if existing email exists in db
-  emailAlreadyExists = false
   const q = "SELECT COUNT(*) FROM users WHERE email=?"
   db.query(q, [req.body.email], (err, result) => {
-    if (err) { console.log(err); return res.status(400).json({ error: "DB error" }); }
-    if (result == 1){
-      emailAlreadyExists = true
+    if (err) { console.log(err); return res.status(400).json({ error: "DB query error" }); }
+    else if (result == 1){
+      return res.status(401).json({ error: "Bad email/password" });
     }
   });
   // if not in db, then insert into db
-  if (emailAlreadyExists){
-    return res.status(401).json({ error: "Bad email/password" }); 
-  } else {
-    // Salt and hash posted password     #######################################################      TODO
-    hashPwd = "4"
-    const qInsert = "INSERT INTO `users` (`authorization`, `email`, `password`) VALUES (?,?,?)"
-    db.query(q, ["user", req.body.email, hasPwd], (err, result) => {
-      if (err) { console.log(err); return res.status(401).json({ error: "Bad email/password" }); }
-      if (result.affectedRows == 1){ // insert successful
-        // return response successful registration
-        return res.json({ message: "Registration success." });
-      }
-    });
-  }
+  // Create a hash for the submitted password
+  const hash = bcrypt.hashSync(req.body.password, 10);
+  const qInsert = "INSERT INTO `users` (`authorization`, `email`, `password`) VALUES (?,?,?)"
+  db.query(qInsert, ["user", req.body.email, hash], (err, result) => {
+    if (err) { console.log(err); return res.status(400).json({ error: "DB insert error" }); }
+    else {
+      // return response successful registration
+      return res.status(201).json({ message: "Registration success." });
+    }
+  });
+  
 });
 
 /***********Authorization***********/
-app.post("/auth", (req, res) => {
+app.post("api/auth", (req, res) => {
   // Verify email/pass was POSTed 
   if (!req.body.email || !req.body.password ) {
     // Unauthorized access
-    return res.status(401).json({ error: "Bad email/password" });   
+    return res.status(401).json({ error: "Missing username and/or password"});  
   }
 
-  // Salt and hash posted password     #######################################################      TODO
-  hashPwd = "4"
   // Check if email/pass matches a record in db
-  const q = "SELECT * FROM `users` WHERE email=? AND password=?"
-  db.query(q, [req.body.email, hasPwd], (err, result) => {
-    if (err) { console.log(err); return res.status(401).json({ error: "Bad email/password" }); }
-    if (result.length > 0){
-      //console.log("User found:", result)
-      // Send back a token that contains the user's information
+  const q = "SELECT * FROM `users` WHERE email=?"
+  db.query(q, [req.body.email], (err, result) => {
+    if (err) { console.log(err); return res.status(400).json({ error: "Bad email/password" }); }
+    else if (bcrypt.compareSync(req.body.password, result.password)) { //compareSync hashes posted password and checks against db password hash
+      // Password hashes match. Send back a token that contains the user's username
       const token = jwt.encode({ uid: result.id, email: result.email, authorization: result.authorization}, secret);
       return res.json({ token: token });
+    } else {
+      return res.status(401).json({ error: "Bad email/password" });
     }
   });
 });
 
 /***********Authentication***********/ //setup middleware function to auto check token
-app.get("/status", (req, res) => {
+app.get("api/status", (req, res) => {
 
   // Check if the X-Auth header is set
   if (!req.headers["x-auth"]) {
@@ -213,16 +213,17 @@ app.get("/status", (req, res) => {
   try {
       const decoded = jwt.decode(token, secret);
       // Check if email is in db
-      if (decoded.email) {
+      if (decoded.uid && decoded.email) {
         const q = "SELECT * FROM `users` WHERE uid=? AND email=?"
         db.query(q, [decoded.uid, decoded.email], (err, result) => {
           if (err) { console.log(err); return res.status(401).json({ error: "Bad email/password" }); }
-          console.log(result)
-          if (result.length > 0){
+          else if (result.length > 0){
             // Send back a status
-            return res.json({ message: "Authenticated" });
+            return res.json({ message: "Authenticated." });
           }
         });
+      } else {
+        return res.status(401).json({ error: "Invalid JWT" });
       }
   }
   catch (ex) {

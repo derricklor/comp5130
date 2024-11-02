@@ -14,13 +14,17 @@ import TopRated from "./routes/toprated";
 import ErrorPage from "./routes/errorpage";
 import Movie from "./routes/movie";
 import EditMovie from "./routes/edit";
+import Login from "./routes/login";
+import Register from "./routes/register";
 import { action as deleteAction } from "./routes/delete";
 
+function toggle(){
+    
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 
     <BrowserRouter>
-
         <nav className="navbar navbar-expand-lg">
             <div className="container-fluid">
                 <Link className="navbar-brand" to="/">MovieDB</Link>
@@ -44,9 +48,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                         <input className="form-control " type="search" placeholder="Search" aria-label="Search"/>
                         <button className="btn btn-outline-success" type="submit">Search</button>
                     </form>
+                    { }
                     <ul className="navbar-nav mb-2 mb-lg-0">
+                    <Link className="nav-link" to="/login">
                         <button type="button" className="btn btn-primary" id="loginBtn">Login</button>
+                    </Link>
+                    <Link className="nav-link" to="/register">
                         <button type="button" className="btn btn-outline-primary ms-1" id="registerBtn">Register</button>
+                    </Link>
                     </ul>
                     <hr />
                 </div>
@@ -60,6 +69,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="/movie/:id" element={<Movie />} />
             <Route path="/movie/:id/edit" element={<EditMovie />} />
             <Route path="/movie/:id/delete" action={deleteAction} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             
             <Route path="*" element={<ErrorPage />} />
         </Routes>
