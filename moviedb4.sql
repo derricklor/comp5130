@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 01, 2024 at 04:14 PM
+-- Generation Time: Nov 02, 2024 at 06:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -72,17 +72,17 @@ INSERT INTO `movies` (`title`, `released`, `runtime`, `director`, `id`, `rating`
 CREATE TABLE `users` (
   `uid` int(11) NOT NULL,
   `authorization` varchar(30) DEFAULT NULL,
-  `username` varchar(30) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `hash` varchar(255) DEFAULT NULL
+  `email` varchar(30) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`uid`, `authorization`, `username`, `password`, `hash`) VALUES
-(1, 'admin', 'rootadmin', 'rootpassword', '987-654-321');
+INSERT INTO `users` (`uid`, `authorization`, `email`, `password`) VALUES
+(1, 'admin', 'admin@gmail.com', 'rootpassword'),
+(2, 'user', 'user@gmail.com', 'password');
 
 --
 -- Indexes for dumped tables
@@ -114,7 +114,7 @@ ALTER TABLE `movies`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

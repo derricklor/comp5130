@@ -1,11 +1,13 @@
 
 const express = require("express");
-const mysql = require("mysql2");
+const mysql = require("mysql2");            // db connection
 const cors = require("cors");
 //const path = require("path");
 const https = require("https");
 const fs = require("fs");
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");  // for parsing requests
+const jwt = require("jwt-simple");          // for json web tokens
+const secret = "supersecret";               // Secret used to encode/decode JWTs
 
 const app = express();
 const PORT = 4000;
@@ -42,7 +44,7 @@ app.post("/api/mssg", (req, res) => {
 app.get("/api/home", (req, res) => {
   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 4";
   db.query(q, [], (err, result) => {
-    if (err) { res.json({ error: "DB home error" }); }
+    if (err) { res.status(401).json({ error: "DB home error" }); }
     return res.json(result);
   });
 });
@@ -65,7 +67,7 @@ app.get("/api/recentlyreleased", (req, res) => {
   console.log(`${Date()}: got get request for recentlyreleased`)
   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 6";
   db.query(q, [], (err, result) => {
-    if (err) { res.json({ error: "DB recently released error" }); }
+    if (err) { res.status(401).json({ error: "DB recently released error" }); }
     return res.json(result);
   });
 });
@@ -74,7 +76,7 @@ app.get("/api/toprated", (req, res) => {
   console.log(`${Date()}: got get request for toprated`)
   const q = "SELECT * FROM movies ORDER BY `rating` DESC LIMIT 12";
   db.query(q, [], (err, result) => {
-    if (err) { res.json({ error: "DB top rated error" }); }
+    if (err) { res.status(401).json({ error: "DB top rated error" }); }
     return res.json(result);
   });
 });
@@ -84,7 +86,7 @@ app.post("/api/movie/create", (req, res) => {
   const q = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
                          VALUES (`New`, `yyyy-mm-dd`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
   db.query(q, [], (err, result) => {
-    if (err) { res.json({ error: "DB create movie error" }); }
+    if (err) { res.status(401).json({ error: "DB create movie error" }); }
     return res.json(result);
   });
 });
@@ -94,7 +96,7 @@ app.get("/api/movie/:id", (req, res) => {
   console.log(`${Date()}: got a get request for movie id: ${id}`)
   const q = "SELECT * FROM movies WHERE `id` = ?";
   db.query(q, id, (err, result) => {
-    if (err) { res.json({ error: "DB get movie error" }); }
+    if (err) { res.status(401).json({ error: "DB get movie error" }); }
     return res.json(result);
   });
 });
@@ -107,16 +109,16 @@ app.post("/api/movie/:id/update", (req, res) => {
     const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
     req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
   } catch (err){
-    return res.json({ error: "Form error."})
+    return res.status(401).json({ error: "Form error."})
   }
   const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
     req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
   const q = "UPDATE movies SET `title`=?, `released`=?, `runtime`=?, `director`=?, `rating`=?, `genre`=?, `plot`=?, `actors`=?, `poster`=? WHERE id=?"
   db.query(q, value, (err, result) => {
-    if (err) { console.log(err); return res.json({ error: "Movie edit error."}); }
+    if (err) { console.log(err); return res.status(401).json({ error: "Movie edit error."}); }
     //console.log(result) //debug
     //return res.json(result);
-    return res.json({ success: "true" , message: "Movie update success."})
+    return res.json({ message: "Movie update success."})
   })
 });
 
@@ -127,19 +129,105 @@ app.post("/api/movie/:id/delete", (req, res) => {
   try{
     hashKey = req.body.hashKey //check authentication key from body
   } catch (err){
-    return res.json({ error: "Permission denied."})
+    return res.status(401).json({ error: "Permission denied."})
   }
   const qk = "SELECT `admin` FROM `users` WHERE `hash`=?"
   db.query(q, hashKey, (err, result) => {
-    if (err) { console.log(err); return res.json({ error: "Permission denied."}); }
+    if (err) { console.log(err); return res.status(401).json({ error: "Permission denied."}); }
     //continue if va
   });
   //
   const qd = "DELETE FROM movies WHERE `id`= ?"
   db.query(qd, id, (err, result) => {
-    if (err) { res.json({ error: "Movie delete error: " + err }); }
+    if (err) { res.status(401).json({ error: "Movie delete error: " + err }); }
     return res.json({ success: "true" , message: "Movie delete success."});
   });
+});
+
+
+/***********Registration***********/
+app.post("/registration", (req, res) => {
+  // check if email and password is POSTED
+  if (!req.body.email || !req.body.password ) {
+    return res.status(406).json({ error: "Bad email/password" }); 
+  } 
+  // Check if existing email exists in db
+  emailAlreadyExists = false
+  const q = "SELECT COUNT(*) FROM users WHERE email=?"
+  db.query(q, [req.body.email], (err, result) => {
+    if (err) { console.log(err); return res.status(400).json({ error: "DB error" }); }
+    if (result == 1){
+      emailAlreadyExists = true
+    }
+  });
+  // if not in db, then insert into db
+  if (emailAlreadyExists){
+    return res.status(401).json({ error: "Bad email/password" }); 
+  } else {
+    // Salt and hash posted password     #######################################################      TODO
+    hashPwd = "4"
+    const qInsert = "INSERT INTO `users` (`authorization`, `email`, `password`) VALUES (?,?,?)"
+    db.query(q, ["user", req.body.email, hasPwd], (err, result) => {
+      if (err) { console.log(err); return res.status(401).json({ error: "Bad email/password" }); }
+      if (result.affectedRows == 1){ // insert successful
+        // return response successful registration
+        return res.json({ message: "Registration success." });
+      }
+    });
+  }
+});
+
+/***********Authorization***********/
+app.post("/auth", (req, res) => {
+  // Verify email/pass was POSTed 
+  if (!req.body.email || !req.body.password ) {
+    // Unauthorized access
+    return res.status(401).json({ error: "Bad email/password" });   
+  }
+
+  // Salt and hash posted password     #######################################################      TODO
+  hashPwd = "4"
+  // Check if email/pass matches a record in db
+  const q = "SELECT * FROM `users` WHERE email=? AND password=?"
+  db.query(q, [req.body.email, hasPwd], (err, result) => {
+    if (err) { console.log(err); return res.status(401).json({ error: "Bad email/password" }); }
+    if (result.length > 0){
+      //console.log("User found:", result)
+      // Send back a token that contains the user's information
+      const token = jwt.encode({ uid: result.id, email: result.email, authorization: result.authorization}, secret);
+      return res.json({ token: token });
+    }
+  });
+});
+
+/***********Authentication***********/ //setup middleware function to auto check token
+app.get("/status", (req, res) => {
+
+  // Check if the X-Auth header is set
+  if (!req.headers["x-auth"]) {
+      return res.status(401).json({error: "Missing X-Auth header"});
+  }
+
+  // X-Auth should contain the token value
+  const token = req.headers["x-auth"];
+  try {
+      const decoded = jwt.decode(token, secret);
+      // Check if email is in db
+      if (decoded.email) {
+        const q = "SELECT * FROM `users` WHERE uid=? AND email=?"
+        db.query(q, [decoded.uid, decoded.email], (err, result) => {
+          if (err) { console.log(err); return res.status(401).json({ error: "Bad email/password" }); }
+          console.log(result)
+          if (result.length > 0){
+            // Send back a status
+            return res.json({ message: "Authenticated" });
+          }
+        });
+      }
+  }
+  catch (ex) {
+    return res.status(401).json({ error: "Invalid JWT" });
+  }
 });
 
 

@@ -25,13 +25,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <div className="container-fluid">
                 <Link className="navbar-brand" to="/">MovieDB</Link>
                 <button
-                    className="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
+                    className="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
                 >
                     <span className="navbar-toggler-icon" />
                 </button>
@@ -43,21 +39,16 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                         <li className="nav-item">
                             <Link className="nav-link" to="/toprated">Top Rated</Link>
                         </li>
-                        <li className="nav-item">
-                            <Link className="nav-link disabled">List</Link>
-                        </li>
                     </ul>
-                    <form className="d-flex" role="search" id="search">
-                        <input
-                            className="form-control me-2"
-                            type="search"
-                            placeholder="Search"
-                            aria-label="Search"
-                        />
-                        <button className="btn btn-outline-success" type="submit">
-                            Search
-                        </button>
+                    <form className="d-flex me-5" role="search" id="search">
+                        <input className="form-control " type="search" placeholder="Search" aria-label="Search"/>
+                        <button className="btn btn-outline-success" type="submit">Search</button>
                     </form>
+                    <ul className="navbar-nav mb-2 mb-lg-0">
+                        <button type="button" className="btn btn-primary" id="loginBtn">Login</button>
+                        <button type="button" className="btn btn-outline-primary ms-1" id="registerBtn">Register</button>
+                    </ul>
+                    <hr />
                 </div>
             </div>
         </nav>
@@ -75,5 +66,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </BrowserRouter>
 
 );
-//<Route path="/movie/*" element={<Index />} />
-//Make movie/:id pass the movie json to movie/:id/edit, then edit will post changes to server
