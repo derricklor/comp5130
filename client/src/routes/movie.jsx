@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
+import { useTokenContext, useUserContext } from "../main"
 
 
 export default function Movie() {
     const { id } = useParams();
     const [singleMovie, setSingleMovie] = useState([])
+    const {user, setUser} = useUserContext()
+    //const [token, setToken] = useTokenContext()
     useEffect(() => {
         axios.get(`http://localhost:4000/api/movie/${id}`)
             .then((res) => {
@@ -32,9 +35,12 @@ export default function Movie() {
                                     <p>Genre: {movie.genre}</p>
                                     <p>Plot: {movie.plot}</p>
                                     <p>Actors: {movie.actors}</p>
+                                    {user.auth == "admin" ?
                                     <Link to={`http://localhost:3000/movie/${id}/edit`}>
                                         <button className="btn btn-primary">Edit</button>
                                     </Link>
+                                        : <></>
+                                    }
 
                                 </div>
                             )) : (

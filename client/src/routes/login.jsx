@@ -5,17 +5,17 @@ import axios from "axios"
 
 
 
-function validateEmail(){
+function validateEmail(inputId, newId){
     let emErrorCount = 0
-    let email = document.getElementById("login-email")
+    let email = document.getElementById(inputId)
     let emailre = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,30}$/    //quantifier {2,30} repeat last at least 2 with at most 30
 
     if ( !emailre.test(email.value) ){
         emErrorCount++
-        if ( document.getElementById("emailInvalid") == null ){
+        if ( document.getElementById(newId) == null ){
             email.classList.add("is-invalid")
             let feedback = document.createElement("div")
-            feedback.setAttribute("id", "emailInvalid")
+            feedback.setAttribute("id", newId)
             feedback.classList.add("invalid-feedback")
             feedback.appendChild(document.createTextNode(`Expected format: example@db.com`))
             email.parentNode.appendChild(feedback)
@@ -26,8 +26,8 @@ function validateEmail(){
 
 function passwordAddInvalidFeedback(message, passwordElement, argId){
     passwordElement.classList.add("is-invalid")
-    //check if elementId exists
-    if ( document.getElementById(argId) == null ){    // if elementId does not exist then create it then add invalid feedback
+    //check if argId exists
+    if ( document.getElementById(argId) == null ){    // if argId does not exist then create it then add invalid feedback
         let feedback = document.createElement("div")
         feedback.setAttribute("id", argId)
         feedback.className = "invalid-feedback"
@@ -91,7 +91,7 @@ export default function Login() {
     useEffect(()=>{
         document.getElementById("login-email").addEventListener("input", validateEmail)
         document.getElementById("login-password").addEventListener("input", validatePassword)
-    });
+    }, []);
     // inner function
     function sendForm(e) {
         e.preventDefault(); //prevent page reload and form submission
@@ -116,8 +116,8 @@ export default function Login() {
                     if (res.status == 200){
                         console.log(res)
                         //save jwt token
-                        sessionStorage.setItem("token", res.data.token)
-                        console.log(sessionStorage.getItem("token"))
+                        localStorage.setItem("moviedbtoken", res.data.token)
+                        console.log(localStorage.getItem("moviedbtoken"))
                         alert("Login success.")
                     }
                     if (res.status == 401){

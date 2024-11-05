@@ -112,7 +112,7 @@ export default function Register() {
         document.getElementById("register-email").addEventListener("input", validateEmail)
         document.getElementById("register-password").addEventListener("input", validatePassword)
         document.getElementById("register-repeat-password").addEventListener("input", repeatPassword)
-    });
+    }, []);
     // inner function
     function sendForm(e) {
         e.preventDefault(); //prevent page reload and form submission

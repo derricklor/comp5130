@@ -39,7 +39,8 @@ app.post("/api/mssg", (req, res) => {
   console.log(req.body);
 
   // Redirecting to the root
-  res.redirect("http://localhost:3000/");
+  //res.redirect("http://localhost:3000/recentlyreleased");
+  res.redirect("/");
 });
 
 app.get("/api/home", (req, res) => {
@@ -52,19 +53,6 @@ app.get("/api/home", (req, res) => {
 });
 
 app.get("/api/recentlyreleased", (req, res) => {
-
-  //revert today's date back 3 years
-  // const todaysDate = new Date();
-  // let d = todaysDate.getDate();
-  // todaysDate.setMonth(todaysDate.getMonth() + -3*12);
-  // if (todaysDate.getDate() != d) {
-  //   todaysDate.setDate(0);
-  // }
-  // //format date in YYYYMMDD
-  // let year = todaysDate.getFullYear();
-  // let month = todaysDate.getMonth()+1;  //0 indexed
-  // if (month < 10){ month = `0${month}`;}
-  // let formattedDate = `${year}${month}00`;
   //query db
   console.log(`${Date()}: got get request for recentlyreleased`)
   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 6";
@@ -94,7 +82,7 @@ app.post("/api/movie/create", (req, res) => {
     res.json(result);
     return
   });
-});
+}); // end of movie create
 
 app.get("/api/movie/:id", (req, res) => {
   const id = req.params.id;
@@ -105,7 +93,7 @@ app.get("/api/movie/:id", (req, res) => {
     res.json(result);
     return
   });
-});
+}); // end of get movie id
 
 app.post("/api/movie/:id/update", (req, res) => {
   const id = req.params.id;
@@ -130,33 +118,50 @@ app.post("/api/movie/:id/update", (req, res) => {
       return
     }
   })
-});
+}); // end of movie update
 
+
+/***********Deleting movie***********/
 app.post("/api/movie/:id/delete", (req, res) => {
   const id = req.params.id;
   console.log(`${Date()}: got a post request for delete movie id: ${id}`)
-  let hashKey;
-  try{
-    hashKey = req.body.hashKey //check authentication key from body
-  } catch (err){
-    res.status(401).json({ error: "Permission denied."});
+  // Check if the X-Auth header is set
+  if (!req.headers["X-Auth"]) {
+    res.status(401).json({error: "Missing X-Auth header"});
     return
   }
-  const qk = "SELECT `admin` FROM `users` WHERE `hash`=?"
-  db.query(q, hashKey, (err, result) => {
-    if (err) { console.log(err); res.status(401).json({ error: "Permission denied."}); return}
-    //continue if va
-  });
-  //
-  const qd = "DELETE FROM movies WHERE `id`= ?"
-  db.query(qd, id, (err, result) => {
-    if (err) { console.log(err); res.status(401).json({ error: "Movie delete error: " + err }); return}
-    else {
-      res.json({ message: "Movie delete success."});
-      return
-    }
-  });
-});
+  // X-Auth should contain the token value
+  const token = req.headers["x-auth"];
+  try {
+      const decoded = jwt.decode(token, secret);
+      // Check if credentials is in db
+      if (decoded.uid && decoded.email && decoded.auth) {
+        const q = "SELECT COUNT(*) AS `count` FROM `users` WHERE uid=? AND email=? AND authorization='admin'"
+        db.query(q, [decoded.uid, decoded.email], (err, result) => {
+          if (err) { console.log(err); res.status(401).json({ error: "DB query error" }); return }
+          else if (result[0].count > 0){
+            // Run the delete query
+            const qdel = "DELETE FROM `movies` WHERE `id`=?"
+            db.query(qdel,[id], (err, result) =>{
+              if (err){ console.log(err); res.status(401).json({ error: "DB delete error" }); return }
+              else {
+                console.log(`Deleted movie with id: ${id}`)// delete success
+                res.json({ message: `Deleted movie with id: ${id}` });// Send back a status
+                return
+              }
+            });  //end second db query
+          }
+        }); //end first db query
+      } else {
+        res.status(401).json({ error: "Invalid JWT" });
+        return
+      }
+  }
+  catch (ex) {
+    res.status(401).json({ error: "Invalid JWT" });
+    return
+  } 
+}); // end of movie delete
 
 
 /***********Registration***********/
@@ -194,8 +199,7 @@ app.post("/api/registration", (req, res) => {
       }
     }
   }); // end first db query
-  
-});
+}); // end of registration
 
 /***********Authorization***********/
 app.post("/api/auth", (req, res) => {
@@ -216,8 +220,8 @@ app.post("/api/auth", (req, res) => {
       else if (bcrypt.compareSync(req.body.password, result[0].password)) { //compareSync hashes posted password and checks against db password hash
         console.log("User has authenticated. Sending token.")
         // Password hashes match. Send back a token that contains the user's username
-        const token = jwt.encode({ uid: result.id, email: result.email, authorization: result.authorization}, secret);
-        res.json({ token: token });
+        const token = jwt.encode({ uid: result.id, email: result.email, auth: result.authorization}, secret);
+        res.json({ token: token, uid: result.id, auth: result.authorization});
         return
       } else {
         console.log("Bad email and or password.")
@@ -230,7 +234,7 @@ app.post("/api/auth", (req, res) => {
     return
   }
   });
-});
+});// end of authorization
 
 /***********Authentication***********/ //setup middleware function to auto check token
 app.get("/api/status", (req, res) => {
@@ -265,7 +269,7 @@ app.get("/api/status", (req, res) => {
     res.status(401).json({ error: "Invalid JWT" });
     return
   }
-});
+});// end of authentication
 
 
 // Creating object of key and certificate for SSL

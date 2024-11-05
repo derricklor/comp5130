@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios"
 import { useParams, redirect, useNavigate } from "react-router-dom"
-
+import { useTokenContext, useUserContext } from "../main"
 
 // Validates the form, returns true if everything is valid.
 // If false, then shows where validator failed, returns false.
@@ -16,27 +16,24 @@ function validateUpdate(myUpdates){
     //     document.getElementById("form-title").parentNode.appendChild(feedback)
     //     return false
     // }
-    // director
-    // rating
-    // genre
-    // plot
-    // actors
-    // poster
+    // director// rating// genre// plot// actors// poster
     return true
 }
-
 
 export default function EditMovie() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [singleMovie, setSingleMovie] = useState([])
+    const {user, setUser} = useUserContext()
+    const [token, setToken] = useTokenContext()
+
     useEffect(() => {
         axios.get(`http://localhost:4000/api/movie/${id}`)
             .then((res) => {
                 setSingleMovie(res.data)
             })
             .catch((err) => console.log(err))
-    }, [])
+    }, []);
 
     // Define an inner function for updating movies, when form is submitted.
     // This inner function has access to outer function's variables.
@@ -59,15 +56,15 @@ export default function EditMovie() {
             return  // errors in the form, show invalid inputs
         }
         // get x-auth token from session storage
-        let token = sessionStorage.getItem("token")
+        //let token = sessionStorage.getItem("token")
         // send the post request to server with body and headers
         // axios.post(url,body,header)
         axios.post(`http://localhost:4000/api/movie/${id}/update`, myUpdates, { headers: { "X-Auth": token }})
             .then((res) => {
-                if (res.data.error){
-                    alert(`${res.data.error}`)
+                if (res.status >= 300){
+                    alert(res.data.error)
                 } else {
-                    alert(`${res.data.message}`)
+                    alert(res.data.message)
                 }
             })
             .catch((err) => {
@@ -82,14 +79,14 @@ export default function EditMovie() {
         e.preventDefault();//prevent form submit
         
         // get x-auth token from session storage
-        let token = sessionStorage.getItem("token")
+        //let token = sessionStorage.getItem("token")
         // send the post delete request to server with only headers
         axios.post(`http://localhost:4000/api/movie/${id}/delete`, { headers: { "X-Auth": token }})
             .then((res) => {
-                if (res.data.error){
-                    alert(`${res.data.error}`)
+                if (res.status >= 300){
+                    alert(res.data.error)
                 } else {
-                    alert(`${res.data.message}`)
+                    alert(res.data.message)
                 }
             })
             .catch((err) => {
