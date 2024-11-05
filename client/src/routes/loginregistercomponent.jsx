@@ -127,23 +127,6 @@ function validateRegister(){
 }
 
 
-//checks if key exists, returns true or false
-// function checkLocalStorageHas(key){
-//     let stored = localStorage.getItem(key)
-//     if (!stored){
-//         return false
-//     }
-//     return true
-// }
-
-// function getLocalStorageItem(key){
-//     let stored = localStorage.getItem(key)
-//     if (!stored){
-//         return null
-//     }
-//     return stored
-// }
-
 export default function LoginRegisterComponent(){
 
     const {user, setUser} = useUserContext()
@@ -166,6 +149,7 @@ export default function LoginRegisterComponent(){
             //canceled, do nothing
         } else {
             localStorage.removeItem("moviedbtoken")
+            localStorage.removeItem("user")
             setToken(null)  //causes LoginRegisterComponent to rerender
             setUser(null)
             return redirect("/");
@@ -207,6 +191,7 @@ export default function LoginRegisterComponent(){
                         
                         localStorage.setItem("moviedbtoken", res.data.token)//save jwt token
                         setToken(res.data.token)// after successful login from server, use setToken. Causes LoginRegisterComponent to rerender
+                        localStorage.setItem("user", {uid: res.data.uid, auth: res.data.auth})
                         setUser({uid: res.data.uid, auth: res.data.auth})
                         alert("Login success.")
                     }

@@ -220,8 +220,8 @@ app.post("/api/auth", (req, res) => {
       else if (bcrypt.compareSync(req.body.password, result[0].password)) { //compareSync hashes posted password and checks against db password hash
         console.log("User has authenticated. Sending token.")
         // Password hashes match. Send back a token that contains the user's username
-        const token = jwt.encode({ uid: result.id, email: result.email, auth: result.authorization}, secret);
-        res.json({ token: token, uid: result.id, auth: result.authorization});
+        const token = jwt.encode({ uid: result[0].uid, email: result[0].email, auth: result[0].authorization}, secret);
+        res.json({ token: token, uid: result[0].uid, auth: result[0].authorization});
         return
       } else {
         console.log("Bad email and or password.")

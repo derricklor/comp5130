@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useContext, createContext, useState } from "react";
 import * as ReactDOM from "react-dom/client";
 import {
     BrowserRouter,
@@ -7,7 +7,7 @@ import {
     Link,
 } from "react-router-dom";
 
-import Index from "./routes/index";
+import Home from "./routes/home";
 import RecentlyReleased from "./routes/recentlyreleased";
 import TopRated from "./routes/toprated";
 import ErrorPage from "./routes/errorpage";
@@ -18,16 +18,16 @@ import LoginRegisterComponent from "./routes/loginregistercomponent";
 
 
 export function useTokenContext() {
-    return React.useContext(TokenContext);
+    return useContext(TokenContext);
 }
 export function useUserContext() {
-    return React.useContext(UserContext);
+    return useContext(UserContext);
 }
-const TokenContext = React.createContext(null)
-const UserContext = React.createContext(null)
+const TokenContext = createContext(null)
+const UserContext = createContext(null)
 export default function Main(){
-    const [token, setToken] = React.useState(localStorage.getItem("moviedbtoken"))
-    const [user, setUser] = React.useState(null)
+    const [token, setToken] = useState(localStorage.getItem("moviedbtoken"))
+    const [user, setUser] = useState(localStorage.getItem("user"))
     
     // Use context as a way of passing dynamic token and user variables to children components
     // Which then display conditional html. ex if logged in, then display logout button
@@ -68,7 +68,7 @@ export default function Main(){
             </nav>
 
             <Routes>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/recentlyreleased" element={<RecentlyReleased />} />
                 <Route path="/toprated" element={<TopRated />} />
                 <Route path="/movie/:id" element={<Movie />} />
