@@ -24,8 +24,17 @@ export default function EditMovie() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [singleMovie, setSingleMovie] = useState([])
-    const {user, setUser} = useUserContext()
-    const [token, setToken] = useTokenContext()
+    const {user, setUser} = useUserContext()    //user stored as string
+    const {token, setToken} = useTokenContext() //token stored as string
+
+    //check if user is in local storage
+    
+    if (user == null){
+        alert("Please log in and try again.")
+        navigate(`/`, { replace: true }); // <-- redirect
+        //redirect("/")   //redirect to home page
+        return
+    }
 
     useEffect(() => {
         axios.get(`http://localhost:4000/api/movie/${id}`)
@@ -55,8 +64,7 @@ export default function EditMovie() {
         if (!validateUpdate(myUpdates)){
             return  // errors in the form, show invalid inputs
         }
-        // get x-auth token from session storage
-        //let token = sessionStorage.getItem("token")
+        // get x-auth token from useContext, token is in form of string
         // send the post request to server with body and headers
         // axios.post(url,body,header)
         axios.post(`http://localhost:4000/api/movie/${id}/update`, myUpdates, { headers: { "X-Auth": token }})
@@ -65,11 +73,13 @@ export default function EditMovie() {
                     alert(res.data.error)
                 } else {
                     alert(res.data.message)
+                    navigate(`/movie/${id}`, { replace: true }); // <-- redirect
                 }
             })
             .catch((err) => {
                 console.log(err)
             })
+        return
         //return redirect(`/movie/${id}`);
     }
 
@@ -78,24 +88,22 @@ export default function EditMovie() {
     function deleteMovie(e) {
         e.preventDefault();//prevent form submit
         
-        // get x-auth token from session storage
-        //let token = sessionStorage.getItem("token")
-        // send the post delete request to server with only headers
-        axios.post(`http://localhost:4000/api/movie/${id}/delete`, { headers: { "X-Auth": token }})
+        // get x-auth token from useContext, token is in form of string
+        // send the post delete request to server with empty body and headers
+        axios.post(`http://localhost:4000/api/movie/${id}/delete`, [], { headers: { "X-Auth": token }})
             .then((res) => {
                 if (res.status >= 300){
                     alert(res.data.error)
                 } else {
                     alert(res.data.message)
+                    navigate(`/`, { replace: true }); // <-- redirect
                 }
             })
             .catch((err) => {
                 console.log(err)
             })
-        return redirect(`/`);
     }
 
-    // <Form> for router
     return (
         <>  
             <div className="row g-1 p-1">

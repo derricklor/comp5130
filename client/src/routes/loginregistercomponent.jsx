@@ -128,7 +128,7 @@ function validateRegister(){
 
 
 export default function LoginRegisterComponent(){
-
+    const navigate = useNavigate()
     const {user, setUser} = useUserContext()
     const {token, setToken} = useTokenContext()   // how to rerender component? with useContext
     
@@ -152,7 +152,7 @@ export default function LoginRegisterComponent(){
             localStorage.removeItem("user")
             setToken(null)  //causes LoginRegisterComponent to rerender
             setUser(null)
-            return redirect("/");
+            navigate(`/`, { replace: true }); // <-- redirect
         }
     }
 
@@ -180,7 +180,6 @@ export default function LoginRegisterComponent(){
                     if (res.status == 200){
                         //remove modal if it remains
                         let mo = bootstrap.Modal.getInstance(document.getElementById("modalLogin"));
-                        console.log(mo);
                         mo.dispose()   // bootstrap instance method to clean up modal element
                         //remove any remaining leftover properties of modal from body tag element and styling
                         let body = document.getElementsByTagName("body")[0]
@@ -189,9 +188,11 @@ export default function LoginRegisterComponent(){
                         body.removeAttribute("data-bs-overflow")
                         body.removeAttribute("data-bs-padding-right")
                         
-                        localStorage.setItem("moviedbtoken", res.data.token)//save jwt token
+                        // Note: localstorage converts value stored in key, as string
+                        // So if storing JSON object, stringify it upon set and parse it upon get
+                        localStorage.setItem("moviedbtoken", res.data.token)//save jwt token 
                         setToken(res.data.token)// after successful login from server, use setToken. Causes LoginRegisterComponent to rerender
-                        localStorage.setItem("user", {uid: res.data.uid, auth: res.data.auth})
+                        localStorage.setItem("user", JSON.stringify({uid: res.data.uid, auth: res.data.auth}))
                         setUser({uid: res.data.uid, auth: res.data.auth})
                         alert("Login success.")
                     }
@@ -246,9 +247,9 @@ export default function LoginRegisterComponent(){
         
         return (
             <>
-                <ul className="navbar-nav mb-2 mb-lg-0">
-                    <button type="button" className="btn btn-primary" id="logoutBtn" onClick={logOutHandler}>Log Out</button>
-                </ul>
+                
+                <button type="button" className="btn btn-primary" id="logoutBtn" onClick={logOutHandler}>Log Out</button>
+                
             </>
         );
     } else {

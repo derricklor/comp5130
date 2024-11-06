@@ -81,8 +81,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `authorization`, `email`, `password`) VALUES
-(1, 'admin', 'admin@gmail.com', 'rootpassword'),
-(2, 'user', 'user@gmail.com', 'password');
+(1, 'admin', 'admin@db.com', '$2a$10$NINM4JkZCPD5Kb/hme82h.XlknJ1Kmokj7ObDJQ1riz5oRVajm5Iy'),
+(2, 'user', 'adam@db.com', '$2a$10$UxiwU/T8RXjBjjob9nN/K.mV9CHi4JRD.FfyfcbM3H0kWnRcqivLS');
+
 
 --
 -- Indexes for dumped tables

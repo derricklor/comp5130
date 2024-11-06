@@ -31,6 +31,8 @@ const db = mysql.createConnection({
 // Serve static files from the public dir
 //app.use(express.static(path.join(__dirname,"public")));
 
+
+
 //test post request
 app.post("/api/mssg", (req, res) => {
   console.log("Got a mssg")
@@ -73,17 +75,6 @@ app.get("/api/toprated", (req, res) => {
   });
 });
 
-app.post("/api/movie/create", (req, res) => {
-  console.log(`${Date()}: got post request for movie create`)
-  const q = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
-                         VALUES (`New`, `yyyy-mm-dd`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
-  db.query(q, [], (err, result) => {
-    if (err) { console.log(err); res.status(401).json({ error: "DB create movie error" }); return}
-    res.json(result);
-    return
-  });
-}); // end of movie create
-
 app.get("/api/movie/:id", (req, res) => {
   const id = req.params.id;
   console.log(`${Date()}: got a get request for movie id: ${id}`)
@@ -95,76 +86,11 @@ app.get("/api/movie/:id", (req, res) => {
   });
 }); // end of get movie id
 
-app.post("/api/movie/:id/update", (req, res) => {
-  const id = req.params.id;
-  console.log(`${Date()}: got a post request for update movie id: ${id}`)
-  //console.log(req.body)
-  try{
-    const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
-    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
-  } catch (err){
-    res.status(401).json({ error: "Form error."});
-    return
-  }
-  const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
-    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
-  const q = "UPDATE movies SET `title`=?, `released`=?, `runtime`=?, `director`=?, `rating`=?, `genre`=?, `plot`=?, `actors`=?, `poster`=? WHERE id=?"
-  db.query(q, value, (err, result) => {
-    if (err) { console.log(err); res.status(401).json({ error: "Movie edit error."}); return}
-    //console.log(result) //debug
-    //return res.json(result);
-    else {
-      res.json({ message: "Movie update success."});
-      return
-    }
-  })
-}); // end of movie update
 
 
-/***********Deleting movie***********/
-app.post("/api/movie/:id/delete", (req, res) => {
-  const id = req.params.id;
-  console.log(`${Date()}: got a post request for delete movie id: ${id}`)
-  // Check if the X-Auth header is set
-  if (!req.headers["X-Auth"]) {
-    res.status(401).json({error: "Missing X-Auth header"});
-    return
-  }
-  // X-Auth should contain the token value
-  const token = req.headers["x-auth"];
-  try {
-      const decoded = jwt.decode(token, secret);
-      // Check if credentials is in db
-      if (decoded.uid && decoded.email && decoded.auth) {
-        const q = "SELECT COUNT(*) AS `count` FROM `users` WHERE uid=? AND email=? AND authorization='admin'"
-        db.query(q, [decoded.uid, decoded.email], (err, result) => {
-          if (err) { console.log(err); res.status(401).json({ error: "DB query error" }); return }
-          else if (result[0].count > 0){
-            // Run the delete query
-            const qdel = "DELETE FROM `movies` WHERE `id`=?"
-            db.query(qdel,[id], (err, result) =>{
-              if (err){ console.log(err); res.status(401).json({ error: "DB delete error" }); return }
-              else {
-                console.log(`Deleted movie with id: ${id}`)// delete success
-                res.json({ message: `Deleted movie with id: ${id}` });// Send back a status
-                return
-              }
-            });  //end second db query
-          }
-        }); //end first db query
-      } else {
-        res.status(401).json({ error: "Invalid JWT" });
-        return
-      }
-  }
-  catch (ex) {
-    res.status(401).json({ error: "Invalid JWT" });
-    return
-  } 
-}); // end of movie delete
-
-
+/**********************************/
 /***********Registration***********/
+/**********************************/
 app.post("/api/registration", (req, res) => {
   console.log(`${Date()}: got a post request for user registration`)
   // check if email and password is POSTED
@@ -201,7 +127,9 @@ app.post("/api/registration", (req, res) => {
   }); // end first db query
 }); // end of registration
 
-/***********Authorization***********/
+/**********************************/
+/***********Authorization**********/
+/**********************************/
 app.post("/api/auth", (req, res) => {
   console.log(`${Date()}: got a post request for user authentication`)
   // Verify email/pass was POSTed 
@@ -236,40 +164,112 @@ app.post("/api/auth", (req, res) => {
   });
 });// end of authorization
 
-/***********Authentication***********/ //setup middleware function to auto check token
-app.get("/api/status", (req, res) => {
 
+/***********************************************************/
+/* ALL ROUTES ABOVE REQUIRE DONT REQUIRE authenticateToken */
+/***********************************************************/
+
+/**********************************************/
+/* ALL ROUTES BELOW REQUIRE authenticateToken */
+/**********************************************/
+
+/***********Authentication***********/ // middleware function to auto check token
+const authenticateToken = (req, res, next) => {
   // Check if the X-Auth header is set
+  // request by default flattens all upper case to lower case
   if (!req.headers["x-auth"]) {
-      res.status(401).json({error: "Missing X-Auth header"});
+      res.status(401).json({error: "Missing X-Auth header"}); // Unauthorized
       return
   }
+    // X-Auth should contain the token value
+    const token = req.headers["x-auth"];
 
-  // X-Auth should contain the token value
-  const token = req.headers["x-auth"];
-  try {
+    try {
       const decoded = jwt.decode(token, secret);
-      // Check if email is in db
+      // Check if uid and email is in db
       if (decoded.uid && decoded.email) {
-        const q = "SELECT * FROM `users` WHERE uid=? AND email=?"
+        // query db in case the user was deleted from db, therefore invalidating the token
+        const q = "SELECT COUNT(*) AS `count` FROM `users` WHERE uid=? AND email=? AND authorization='admin'"
         db.query(q, [decoded.uid, decoded.email], (err, result) => {
-          if (err) { console.log(err); res.status(401).json({ error: "Bad email/password" }); return}
-          else if (result.length > 0){
-            // Send back a status
-            res.json({ message: "Authenticated." });
+          if (err) { console.log(err); res.status(401).json({ error: "Invalid JWT" }); return } // Unauthorized
+          else if (result[0].count > 0){
+            // JWT is valid and db entry shows up then it passes authentication
+            next();
             return
           }
         });
       } else {
-        res.status(401).json({ error: "Invalid JWT" });
+        res.status(401).json({ error: "Invalid JWT" }); // Unauthorized
         return
       }
+    }
+    catch (ex) {
+      console.log(ex)
+      res.status(401).json({ error: "Invalid JWT" }); // Unauthorized
+      return
   }
-  catch (ex) {
-    res.status(401).json({ error: "Invalid JWT" });
+};// end of authenticateToken
+
+
+
+
+app.post("/api/movie/create", authenticateToken, (req, res) => {
+  console.log(`${Date()}: got post request for movie create`)
+  const q = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
+                         VALUES (`New`, `yyyy-mm-dd`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
+  db.query(q, [], (err, result) => {
+    if (err) { console.log(err); res.status(401).json({ error: "DB create movie error" }); return}
+    res.json(result);
+    return
+  });
+}); // end of movie create
+
+
+
+app.post("/api/movie/:id/update", authenticateToken, (req, res) => {
+  const id = req.params.id;
+  console.log(`${Date()}: got a post request for update movie id: ${id}`)
+  //console.log(req.body)
+  try{
+    const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
+    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
+  } catch (err){
+    res.status(401).json({ error: "Form error."});
     return
   }
-});// end of authentication
+  const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
+    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
+  const q = "UPDATE movies SET `title`=?, `released`=?, `runtime`=?, `director`=?, `rating`=?, `genre`=?, `plot`=?, `actors`=?, `poster`=? WHERE id=?"
+  db.query(q, value, (err, result) => {
+    if (err) { console.log(err); res.status(401).json({ error: "Movie edit error."}); return}
+    //console.log(result) //debug
+    //return res.json(result);
+    else {
+      res.json({ message: "Movie update success."});
+      return
+    }
+  })
+}); // end of movie update
+
+
+/***********Deleting movie***********/
+app.post("/api/movie/:id/delete", authenticateToken, (req, res) => {
+  const id = req.params.id;
+  console.log(`${Date()}: got a post request for delete movie id: ${id}`)
+  
+  // Run the delete query
+  const qdel = "DELETE FROM `movies` WHERE `id`=?"
+  db.query(qdel,[id], (err, result) =>{
+    if (err){ console.log(err); res.status(401).json({ error: "DB delete error" }); return }
+    else {
+      console.log(`Deleted movie with id: ${id}`)// delete success
+      res.json({ message: `Deleted movie with id: ${id}` });// Send back a status
+      return
+    }
+  });
+}); // end of movie delete
+
+
 
 
 // Creating object of key and certificate for SSL

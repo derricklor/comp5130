@@ -16,6 +16,15 @@ import EditMovie from "./routes/edit";
 import LoginRegisterComponent from "./routes/loginregistercomponent";
 //import { action as deleteAction } from "./routes/delete";
 
+function toggleTheme(){
+    let html = document.getElementsByTagName("html")[0]
+    if (html.hasAttribute("data-bs-theme")){
+        html.removeAttribute("data-bs-theme")
+    } else {
+        html.setAttribute("data-bs-theme", "dark")
+    }
+    return
+}
 
 export function useTokenContext() {
     return useContext(TokenContext);
@@ -27,7 +36,7 @@ const TokenContext = createContext(null)
 const UserContext = createContext(null)
 export default function Main(){
     const [token, setToken] = useState(localStorage.getItem("moviedbtoken"))
-    const [user, setUser] = useState(localStorage.getItem("user"))
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")))
     
     // Use context as a way of passing dynamic token and user variables to children components
     // Which then display conditional html. ex if logged in, then display logout button
@@ -56,10 +65,11 @@ export default function Main(){
                                 <Link className="nav-link" to="/toprated">Top Rated</Link>
                             </li>
                         </ul>
-                        <form className="d-flex me-5" role="search" id="search">
-                            <input className="form-control " type="search" placeholder="Search" aria-label="Search"/>
+                        <form className="d-flex me-5 col-lg-4" role="search" id="search">
+                            <input className="form-control" type="search" placeholder="Search" aria-label="Search"/>
                             <button className="btn btn-outline-success" type="submit">Search</button>
                         </form>
+                        <button className="btn btn-outline-secondary me-2" title="changeTheme" onClick={toggleTheme}>&#9680;</button>
                         <LoginRegisterComponent/>
                         
                         <hr />

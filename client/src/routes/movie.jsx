@@ -27,6 +27,12 @@ export default function Movie() {
                         {singleMovie?.length > 0 ?
                             singleMovie.map((movie) => (
                                 <div id="movieInfo" key={movie.id}>
+                                    {user?.auth == "admin" ?
+                                    <Link to={`http://localhost:3000/movie/${id}/edit`}>
+                                        <button className="btn btn-primary">Edit/Delete</button>
+                                    </Link>
+                                        : <></>
+                                    }
                                     <h1>{movie.title}</h1>
                                     <img src={movie.poster} alt="movie poster" />
                                     <p>Release date: {movie.released}</p>
@@ -36,15 +42,6 @@ export default function Movie() {
                                     <p>Genre: {movie.genre}</p>
                                     <p>Plot: {movie.plot}</p>
                                     <p>Actors: {movie.actors}</p>
-                                    {
-                                    
-                                    user?.auth == "admin" ?
-                                    <Link to={`http://localhost:3000/movie/${id}/edit`}>
-                                        <button className="btn btn-primary">Edit</button>
-                                    </Link>
-                                        : <></>
-                                    }
-
                                 </div>
                             )) : (
                                 <p>Could not get data.</p>
