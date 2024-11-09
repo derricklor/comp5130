@@ -13,7 +13,8 @@ import TopRated from "./routes/toprated";
 import ErrorPage from "./routes/errorpage";
 import Movie from "./routes/movie";
 import EditMovie from "./routes/edit";
-import LoginRegisterComponent from "./routes/loginregistercomponent";
+import LoginRegisterComponent from "./components/loginregistercomponent";
+import SearchBar from "./components/searchbar";
 //import { action as deleteAction } from "./routes/delete";
 
 function toggleTheme(){
@@ -46,7 +47,7 @@ export default function Main(){
         <TokenContext.Provider value={{token, setToken}}>
         <UserContext.Provider value={{user, setUser}}>
 
-            <nav className="navbar navbar-expand-lg">
+            <nav className="navbar navbar-expand-lg justify-content-center">
                 <div className="container-fluid">
                     <Link className="navbar-brand" to="/">MovieDB</Link>
                     <button
@@ -65,10 +66,8 @@ export default function Main(){
                                 <Link className="nav-link" to="/toprated">Top Rated</Link>
                             </li>
                         </ul>
-                        <form className="d-flex me-5 col-lg-4" role="search" id="search">
-                            <input className="form-control" type="search" placeholder="Search" aria-label="Search"/>
-                            <button className="btn btn-outline-success" type="submit">Search</button>
-                        </form>
+                        <SearchBar/>
+                        
                         <button className="btn btn-outline-secondary me-2" title="changeTheme" onClick={toggleTheme}>&#9680;</button>
                         <LoginRegisterComponent/>
                         

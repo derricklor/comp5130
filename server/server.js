@@ -75,6 +75,20 @@ app.get("/api/toprated", (req, res) => {
   });
 });
 
+app.get("/api/search/:searchQuery", (req, res) => {
+  const searchQuery = req.params.searchQuery;
+  console.log(`${Date()}: got get request for search ${searchQuery}`)
+  const qSearch = "SELECT id, title FROM movies WHERE title LIKE ? ORDER BY `title` ASC LIMIT 12";
+  db.query(qSearch, ['%'+searchQuery+'%'], (err, result) => {
+    if (err) { console.log(err); res.status(401).json({ error: "DB search query error" }); return}
+    else if (result.length > 0){
+      console.log("sending results: ", result)
+      res.json(result);
+      return
+    }
+  });
+});
+
 app.get("/api/movie/:id", (req, res) => {
   const id = req.params.id;
   console.log(`${Date()}: got a get request for movie id: ${id}`)
@@ -163,6 +177,9 @@ app.post("/api/auth", (req, res) => {
   }
   });
 });// end of authorization
+
+
+
 
 
 /***********************************************************/

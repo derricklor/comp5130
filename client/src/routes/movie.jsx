@@ -21,8 +21,8 @@ export default function Movie() {
     return (
         <>
             <div className="row g-1 p-1">
-                <div className="col-2"></div>
-                <div className="col-8">
+                <div className="col-xm-0 col-sm-2"></div>
+                <div className="col-xm-12 col-sm-8">
                     <div className="row">
                         {singleMovie?.length > 0 ?
                             singleMovie.map((movie) => (
@@ -49,7 +49,7 @@ export default function Movie() {
                         }
                     </div>
                 </div>
-                <div className="col-2"></div>
+                <div className="col-xm-0 col-sm-2"></div>
             </div>
         </>
     )

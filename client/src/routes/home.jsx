@@ -20,6 +20,7 @@ export default function Home() {
                             <li className="list-group-item">Register and login to join the community</li>
                         </ul>
                         
+                        
                     </div>
                 </div>
 
