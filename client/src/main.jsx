@@ -12,6 +12,7 @@ import RecentlyReleased from "./routes/recentlyreleased";
 import TopRated from "./routes/toprated";
 import ErrorPage from "./routes/errorpage";
 import Movie from "./routes/movie";
+import AddMovie from "./routes/add";
 import EditMovie from "./routes/edit";
 import LoginRegisterComponent from "./components/loginregistercomponent";
 import SearchBar from "./components/searchbar";
@@ -65,6 +66,11 @@ export default function Main(){
                             <li className="nav-item">
                                 <Link className="nav-link" to="/toprated">Top Rated</Link>
                             </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/movie/add">
+                                    <button type="button" className="btn btn-primary">Add Movie</button>
+                                </Link>
+                            </li>
                         </ul>
                         <SearchBar/>
                         
@@ -80,6 +86,7 @@ export default function Main(){
                 <Route path="/" element={<Home />} />
                 <Route path="/recentlyreleased" element={<RecentlyReleased />} />
                 <Route path="/toprated" element={<TopRated />} />
+                <Route path="/movie/add" element={<AddMovie />} />
                 <Route path="/movie/:id" element={<Movie />} />
                 <Route path="/movie/:id/edit" element={<EditMovie />} />
                 

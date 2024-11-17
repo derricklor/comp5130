@@ -20,10 +20,8 @@ function validateUpdate(myUpdates){
     return true
 }
 
-export default function EditMovie() {
+export default function AddMovie() {
     const navigate = useNavigate();
-    const { id } = useParams();
-    const [singleMovie, setSingleMovie] = useState([])
     const {user, setUser} = useUserContext()    //user stored as string
     const {token, setToken} = useTokenContext() //token stored as string
 
@@ -36,20 +34,13 @@ export default function EditMovie() {
         return
     }
 
-    useEffect(() => {
-        axios.get(`http://localhost:4000/api/movie/${id}`)
-            .then((res) => {
-                setSingleMovie(res.data)
-            })
-            .catch((err) => console.log(err))
-    }, []);
 
-    // Define an inner function for updating movies, when form is submitted.
+    // Define an inner function for adding a movie, when form is submitted.
     // This inner function has access to outer function's variables.
-    function updateMovie(e) {
+    function addMovie(e) {
         e.preventDefault(); //prevent page reload
-        //get form data and put into JSON of updates
-        let myUpdates = {
+        //get form data and put into JSON of movie
+        let myMovie = {
             title: document.getElementById("form-title").value,
             released: document.getElementById("form-released").value,
             runtime : document.getElementById("form-runtime").value,
@@ -61,48 +52,28 @@ export default function EditMovie() {
             poster : document.getElementById("form-poster").value
         }
         //validate the JSON
-        if (!validateUpdate(myUpdates)){
+        if (!validateUpdate(myMovie)){
             return  // errors in the form, show invalid inputs
         }
         // get x-auth token from useContext, token is in form of string
         // send the post request to server with body and headers
         // axios.post(url,body,header)
-        axios.post(`http://localhost:4000/api/movie/${id}/update`, myUpdates, { headers: { "X-Auth": token }})
+        axios.post(`http://localhost:4000/api/movie/add`, myMovie, { headers: { "X-Auth": token }})
             .then((res) => {
                 if (res.status >= 300){
                     alert(res.data.error)
                 } else {
                     alert(res.data.message)
-                    navigate(`/movie/${id}`, { replace: true }); // <-- redirect
+                    navigate(`/`, { replace: true });
+                    //navigate(`/movie/${id}`, { replace: true }); // <-- redirect
                 }
             })
             .catch((err) => {
                 console.log(err)
             })
         return
-        //return redirect(`/movie/${id}`);
     }
 
-    // Define an inner function for deleting movies, when delete button is confirmed.
-    // This inner function has access to outer function's variables.
-    function deleteMovie(e) {
-        e.preventDefault();//prevent form submit
-        
-        // get x-auth token from useContext, token is in form of string
-        // send the post delete request to server with empty body and headers
-        axios.post(`http://localhost:4000/api/movie/${id}/delete`, [], { headers: { "X-Auth": token }})
-            .then((res) => {
-                if (res.status >= 300){
-                    alert(res.data.error)
-                } else {
-                    alert(res.data.message)
-                    navigate(`/`, { replace: true }); // <-- redirect
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }
 
     return (
         <>  
@@ -110,68 +81,65 @@ export default function EditMovie() {
                 <div className="col-md-0 col-xl-3"></div>
                 <div className="col-md-12 col-xl-6">
                     <div className="row">
-                        <h1 className="m-4 text-start">Edit</h1>
-                        {singleMovie?.length > 0 ?
-                            singleMovie.map((movie) => (
-
-                                <div id="movieform" key={movie.id}>
+                        <h1 className="m-4 text-start">Add Movie</h1>
+                                <div id="movieform">
                                     <p>
                                         <button type="button" className="btn btn-secondary" onClick={() => { navigate(-1); }}>Cancel</button>
                                     </p>
-                                    <form className="row g-3 was-validated" onSubmit={updateMovie}>
+                                    <form className="row g-3 was-validated" onSubmit={addMovie}>
                                         <div className="col-md-6">
                                             <label htmlFor="form-title" className="form-label">Title</label>
-                                            <input type="text" className="form-control" id="form-title" name="title" defaultValue={movie.title} maxLength={255} required />
+                                            <input type="text" className="form-control" id="form-title" name="title" placeholder="Title of movie" maxLength={255} required />
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Title is required</div>
                                         </div>
                                         <div className="col-md-3">
                                             <label htmlFor="form-released" className="form-label">Released</label>
-                                            <input type="date" className="form-control" id="form-released" name="released" defaultValue={movie.released} placeholder="mmddyyyy" required />
+                                            <input type="date" className="form-control" id="form-released" name="released" defaultValue={''} placeholder="mmddyyyy" required />
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Release date is required</div>
                                         </div>
                                         <div className="col-md-2">
                                             <label htmlFor="form-runtime" className="form-label">Runtime</label>
-                                            <input type="number" className="form-control" id="form-runtime" name="runtime" defaultValue={movie.runtime} placeholder={0} min={0} max={999} step={1} required />
+                                            <input type="number" className="form-control" id="form-runtime" name="runtime" placeholder='minutes' min={0} max={999} step={1} required />
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Runtime is required</div>
                                         </div>
                                         <div className="col-md-4">
                                             <label htmlFor="form-director" className="form-label">Director</label>
-                                            <input type="text" className="form-control" id="form-director" name="director" defaultValue={movie.director} placeholder="..." required />
+                                            <input type="text" className="form-control" id="form-director" name="director" defaultValue={''} placeholder="Name of director(s)" required />
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Director is required</div>
                                         </div>
                                         <div className="col-md-2">
                                             <label htmlFor="form-rating" className="form-label">Rating</label>
-                                            <input type="number" className="form-control" id="form-rating" name="rating" min={0} max={10} step={0.1} defaultValue={movie.rating} required />
+                                            <input type="number" className="form-control" id="form-rating" name="rating" min={0} max={10} step={0.1} placeholder="Score" required />
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Rating is required</div>
                                         </div>
                                         <div className="col-md-6">
                                             <label htmlFor="form-genre" className="form-label">Genre</label>
-                                            <input type="text" className="form-control" id="form-genre" name="genre" defaultValue={movie.genre} placeholder="..." required />
+                                            <input type="text" className="form-control" id="form-genre" name="genre" defaultValue={''} placeholder="Genre(s)" required />
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Genre is required</div>
                                         </div>
                                         <div className="col-md-12">
                                             <label htmlFor="form-plot" className="form-label">Plot</label>
-                                            <textarea className="form-control" id="form-plot" rows="3" name="plot" defaultValue={movie.plot} placeholder="..." required>
+                                            <textarea className="form-control" id="form-plot" rows="3" name="plot" defaultValue={''} placeholder="Synopsis of movie. No spoilers!" required>
                                             </textarea>
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Plot is required</div>
                                         </div>
                                         <div className="col-md-12">
                                             <label htmlFor="form-actors" className="form-label">Actors</label>
-                                            <textarea className="form-control" id="form-actors" rows="2" name="actors" defaultValue={movie.actors} placeholder="..." required>
+                                            <textarea className="form-control" id="form-actors" rows="2" name="actors" defaultValue={''} placeholder="List of actor(s) and actress(es)" required>
                                             </textarea>
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Actors is required</div>
                                         </div>
                                         <div className="col-md-12">
                                             <label htmlFor="form-poster" className="form-label">Poster Image</label>
-                                            <textarea className="form-control" id="form-poster" rows="2" name="poster" defaultValue={movie.poster} placeholder="..." required>
+                                            <textarea className="form-control" id="form-poster" rows="2" name="poster" defaultValue={''} placeholder="URL link to poster image" required>
                                             </textarea>
                                             <div className="valid-feedback">Valid.</div>
                                             <div className="invalid-feedback">Poster is required</div>
@@ -179,25 +147,13 @@ export default function EditMovie() {
 
                                         <div className="row g-3">
                                             <div className="col-6">
-                                                <button className="btn btn-primary" type="submit">Update</button>
-                                            </div>
-                                            <div className="col-6">
-                                                <button className="btn btn-danger" onClick={(event) => {
-                                                    if (!confirm("Confirm you want to delete this movie.")) {
-                                                        event.preventDefault();//prevent form submit if cancel
-                                                    } else {
-                                                        deleteMovie(event);//run delete function for current movie displayed
-                                                    }
-                                                }}>Delete</button>
+                                                <button className="btn btn-primary" type="submit">Add</button>
                                             </div>
                                         </div>
                                     </form>
 
                                 </div>
-                            )) : (
-                                <p>Could not get data.</p>
-                            )
-                        }
+                            
                     </div>
                 </div>
                 <div className="col-md-0 col-xl-3"></div>
