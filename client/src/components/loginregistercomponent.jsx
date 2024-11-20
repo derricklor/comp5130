@@ -247,9 +247,7 @@ export default function LoginRegisterComponent(){
         
         return (
             <>
-                
                 <button type="button" className="btn btn-primary" id="logoutBtn" onClick={logOutHandler}>Log Out</button>
-                
             </>
         );
     } else {

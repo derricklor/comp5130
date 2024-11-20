@@ -6,9 +6,9 @@ import { useTokenContext, useUserContext } from "../main"
 
 export default function Movie() {
     const { id } = useParams();
-    const [singleMovie, setSingleMovie] = useState([])
+    const [singleMovie, setSingleMovie] = useState([]);
 
-    const {user, setUser} = useUserContext()
+    const {user, setUser} = useUserContext();
     //const [token, setToken] = useTokenContext()
     useEffect(() => {
         axios.get(`http://localhost:4000/api/movie/${id}`)
@@ -31,7 +31,8 @@ export default function Movie() {
                                     <Link to={`http://localhost:3000/movie/${id}/edit`}>
                                         <button className="btn btn-primary">Edit/Delete</button>
                                     </Link>
-                                        : <></>
+                                        : 
+                                        <></>
                                     }
                                     <h1>{movie.title}</h1>
                                     <img src={movie.poster} alt="movie poster" />

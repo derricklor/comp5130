@@ -40,9 +40,8 @@ export default function SearchBar(){
     return (
         <>
 
-            <div className="d-flex col-lg-5 me-1 dropdown">
-                <label className="me-2" htmlFor="searchbar">Search</label>
-                <input className="dropdown-toggle col-6" id="searchbar" data-bs-toggle="dropdown" aria-expanded="false" 
+            <div className="d-flex col-8 me-1 dropdown">
+                <input className="dropdown-toggle" id="searchbar" data-bs-toggle="dropdown" aria-expanded="false" 
                         placeholder="Type to search..."/>
         
                 <ul className="dropdown-menu" id="resultOptions">
