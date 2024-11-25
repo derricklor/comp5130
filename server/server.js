@@ -230,14 +230,26 @@ const authenticateToken = (req, res, next) => {
 
 
 
-app.post("/api/movie/create", authenticateToken, (req, res) => {
-  console.log(`${Date()}: got post request for movie create`)
-  const q = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
-                         VALUES (`New`, `yyyy-mm-dd`, `0`, `director`, `0`, `no genre`, `no plot`, `no actors`, `no poster`)";
-  db.query(q, [], (err, result) => {
-    if (err) { console.log(err); res.status(401).json({ error: "DB create movie error" }); return}
-    res.json(result);
+app.post("/api/movie/add", authenticateToken, (req, res) => {
+  console.log(`${Date()}: got post request for movie add`)
+  // check if myMovie is POSTED in request body
+  try{
+    const myMovie = [req.body.title, req.body.released, req.body.runtime, req.body.director,
+    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster]
+  } catch (err){
+    res.status(401).json({ error: "Incorrect add form."});
     return
+  }
+  const myMovie = [req.body.title, req.body.released, req.body.runtime, req.body.director,
+    req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster]
+  const qadd = "INSERT INTO movies (title, released, runtime, director, rating, genre, plot, actors, poster) \
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  db.query(qadd, myMovie, (err, result) => {
+    if (err) { console.log(err); res.status(401).json({ error: "DB create movie error" }); return}
+    else {
+      res.json({ message: "Movie successfully added."});
+      return
+    }
   });
 }); // end of movie create
 
@@ -256,8 +268,8 @@ app.post("/api/movie/:id/update", authenticateToken, (req, res) => {
   }
   const value = [req.body.title, req.body.released, req.body.runtime, req.body.director,
     req.body.rating, req.body.genre, req.body.plot, req.body.actors, req.body.poster, id]
-  const q = "UPDATE movies SET `title`=?, `released`=?, `runtime`=?, `director`=?, `rating`=?, `genre`=?, `plot`=?, `actors`=?, `poster`=? WHERE id=?"
-  db.query(q, value, (err, result) => {
+  const qupdate = "UPDATE movies SET `title`=?, `released`=?, `runtime`=?, `director`=?, `rating`=?, `genre`=?, `plot`=?, `actors`=?, `poster`=? WHERE id=?"
+  db.query(qupdate, value, (err, result) => {
     if (err) { console.log(err); res.status(401).json({ error: "Movie edit error."}); return}
     //console.log(result) //debug
     //return res.json(result);
@@ -265,7 +277,7 @@ app.post("/api/movie/:id/update", authenticateToken, (req, res) => {
       res.json({ message: "Movie update success."});
       return
     }
-  })
+  });
 }); // end of movie update
 
 
