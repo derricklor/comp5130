@@ -45,19 +45,19 @@ app.post("/api/mssg", (req, res) => {
   res.redirect("/");
 });
 
-app.get("/api/home", (req, res) => {
-  const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 4";
-  db.query(q, [], (err, result) => {
-    if (err) { console.log(err); res.status(401).json({ error: "DB home error" }); return}
-    res.json(result);
-    return
-  });
-});
+// app.get("/api/home", (req, res) => {
+//   const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 4";
+//   db.query(q, [], (err, result) => {
+//     if (err) { console.log(err); res.status(401).json({ error: "DB home error" }); return}
+//     res.json(result);
+//     return
+//   });
+// });
 
 app.get("/api/recentlyreleased", (req, res) => {
   //query db
   console.log(`${Date()}: got get request for recentlyreleased`)
-  const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 6";
+  const q = "SELECT * FROM movies ORDER BY `released` DESC LIMIT 12";
   db.query(q, [], (err, result) => {
     if (err) { console.log(err); res.status(401).json({ error: "DB recently released error" }); return}
     res.json(result);
