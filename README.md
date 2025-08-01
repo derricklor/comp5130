@@ -1,5 +1,6 @@
 # comp5130
 For internet and web systems class.
+The purpose of the project is to build a website that utilizes modern techniques and technologies. The project touches upon basic and advanced levels of learning that are more commonly used in the industry today. Consider it an educational project that is meant to encompass the full stack of development from front-end, back-end, deployment, and upkeep of a software program.
 
 # How to setup database:
 1. Run XAMPP
@@ -16,3 +17,12 @@ For internet and web systems class.
 1. In the client folder, run ```npm run dev``` to start the client.
 2. Navigate to localhost:3000 in any web browser.
 
+#  List of Supported Features
+1. View database of supported movies.
+2. Display basic details of the movie.
+3. Create an account.
+4. Login using an account.
+5. Admin accounts can add, edit, or delete movie entries.
+6. View most top-rated movies.
+7. View of recently released movies.
+8. Guests and users can search for movies in the database.
