@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { redirect, useNavigate } from "react-router-dom"
 import axios from "axios"
-import { useTokenContext, useUserContext } from "../main"
+import { useTokenContext, useUserContext, useNetworkContext} from "../main"
 
 function repeatPassword(){
     let pwErrorCount = 0
@@ -131,6 +131,8 @@ export default function LoginRegisterComponent(){
     const navigate = useNavigate()
     const {user, setUser} = useUserContext()
     const {token, setToken} = useTokenContext()   // how to rerender component? with useContext
+
+    const {network, setNetwork} = useNetworkContext()
     
     useEffect(()=>{
         if (token == null){
@@ -172,7 +174,7 @@ export default function LoginRegisterComponent(){
         
         // send the post request to server with body
         // axios.post(url,body,header)
-        axios.post(`http://localhost:4000/api/auth`, myLogin)
+        axios.post(`http://${network.host}:${network.serverPort}/api/auth`, myLogin)
             .then((res) => {
                 if (res.status >= 300){
                     alert(res.data.error)
@@ -224,7 +226,7 @@ export default function LoginRegisterComponent(){
         
         // send the post request to server with body
         // axios.post(url,body,header)
-        axios.post(`http://localhost:4000/api/registration`, myRegister)
+        axios.post(`http://${network.host}:${network.serverPort}/api/registration`, myRegister)
             .then((res) => {
                 if (res.status >= 300){
                     alert(res.data.error)

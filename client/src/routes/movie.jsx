@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
-import { useTokenContext, useUserContext } from "../main"
+import { useTokenContext, useUserContext, useNetworkContext } from "../main"
 
 
 export default function Movie() {
@@ -10,8 +10,10 @@ export default function Movie() {
 
     const {user, setUser} = useUserContext();
     //const [token, setToken] = useTokenContext()
+    const {network, setNetwork} = useNetworkContext()
+
     useEffect(() => {
-        axios.get(`http://localhost:4000/api/movie/${id}`)
+        axios.get(`http://${network.host}:${network.serverPort}/api/movie/${id}`)
             .then((res) => {
                 setSingleMovie(res.data)
             })
@@ -28,7 +30,7 @@ export default function Movie() {
                             singleMovie.map((movie) => (
                                 <div id="movieInfo" key={movie.id}>
                                     {user?.auth == "admin" ?
-                                    <Link to={`http://localhost:3000/movie/${id}/edit`}>
+                                    <Link to={`http://${network.host}:${network.clientPort}/movie/${id}/edit`}>
                                         <button className="btn btn-primary">Edit/Delete</button>
                                     </Link>
                                         : 

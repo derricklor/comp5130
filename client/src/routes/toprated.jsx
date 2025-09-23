@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNetworkContext } from "../main"
 
 export default function TopRated() {
     
-
     const [movieList, setMovieList] = useState([])
+    const {network, setNetwork} = useNetworkContext()
+
     useEffect(() => {
-        axios.get(`http://localhost:4000/api/toprated`)
+        axios.get(`http://${network.host}:${network.serverPort}/api/toprated`)
             .then((res) => {
                 setMovieList(res.data)
             })
@@ -26,7 +28,7 @@ export default function TopRated() {
                                 <div className="card m-2" key={movie.id} style={{ maxWidth: 520 }}>
                                     <div className="row g-0">
                                         <div className="col-sm-12 col-md-4">
-                                            <Link to={`http://localhost:3000/movie/${movie.id}`}>
+                                            <Link to={`${network.host}:${network.clientPort}/movie/${movie.id}`}>
                                                 <img src={movie.poster} className="img-fluid rounded-start " alt={`${movie.title} poster`} />
                                             </Link>
                                         </div>

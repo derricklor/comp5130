@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios"
 import { useParams, redirect, useNavigate } from "react-router-dom"
-import { useTokenContext, useUserContext } from "../main"
+import { useTokenContext, useUserContext, useNetworkContext } from "../main"
 
 // Validates the form, returns true if everything is valid.
 // If false, then shows where validator failed, returns false.
@@ -26,6 +26,7 @@ export default function EditMovie() {
     const [singleMovie, setSingleMovie] = useState([])
     const {user, setUser} = useUserContext()    //user stored as string
     const {token, setToken} = useTokenContext() //token stored as string
+    const {network, setNetwork} = useNetworkContext()
 
     //check if user is in local storage
     if (user == null){
@@ -37,7 +38,7 @@ export default function EditMovie() {
     }
 
     useEffect(() => {
-        axios.get(`http://localhost:4000/api/movie/${id}`)
+        axios.get(`http://${network.host}:${network.serverPort}/api/movie/${id}`)
             .then((res) => {
                 setSingleMovie(res.data)
             })
@@ -67,7 +68,7 @@ export default function EditMovie() {
         // get x-auth token from useContext, token is in form of string
         // send the post request to server with body and headers
         // axios.post(url,body,header)
-        axios.post(`http://localhost:4000/api/movie/${id}/update`, myUpdates, { headers: { "X-Auth": token }})
+        axios.post(`http://${network.host}:${network.serverPort}/api/movie/${id}/update`, myUpdates, { headers: { "X-Auth": token }})
             .then((res) => {
                 if (res.status >= 300){
                     alert(res.data.error)
@@ -90,7 +91,7 @@ export default function EditMovie() {
         
         // get x-auth token from useContext, token is in form of string
         // send the post delete request to server with empty body and headers
-        axios.post(`http://localhost:4000/api/movie/${id}/delete`, [], { headers: { "X-Auth": token }})
+        axios.post(`http://${network.host}:${network.serverPort}/api/movie/${id}/delete`, [], { headers: { "X-Auth": token }})
             .then((res) => {
                 if (res.status >= 300){
                     alert(res.data.error)

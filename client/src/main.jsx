@@ -35,12 +35,16 @@ export function useTokenContext() {
 export function useUserContext() {
     return useContext(UserContext);
 }
+export function useNetworkContext() {
+    return useContext(NetworkContext);
+}
 const TokenContext = createContext(null)
 const UserContext = createContext(null)
+const NetworkContext = createContext(null)
 export default function Main(){
     const [token, setToken] = useState(localStorage.getItem("moviedbtoken"))
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")))
-    
+    const [network, setNetwork] = useState({host:"localhost", clientPort:5173, serverPort:4000})
     // Use context as a way of passing dynamic token and user variables to children components
     // Which then display conditional html. ex if logged in, then display logout button
     return(
@@ -48,6 +52,7 @@ export default function Main(){
     <BrowserRouter>
         <TokenContext.Provider value={{token, setToken}}>
         <UserContext.Provider value={{user, setUser}}>
+        <NetworkContext.Provider value={{network, setNetwork}}>
 
             <nav className="navbar navbar-expand-lg">
                 <div className="container-fluid">
@@ -55,7 +60,7 @@ export default function Main(){
                     <button className="navbar-toggler" type="button"
                         data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
-                    >
+                        >
                         <span className="navbar-toggler-icon" />
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -94,6 +99,7 @@ export default function Main(){
                 
                 <Route path="*" element={<ErrorPage />} />
             </Routes>
+        </NetworkContext.Provider>
         </UserContext.Provider>
         </TokenContext.Provider>
     </BrowserRouter>
