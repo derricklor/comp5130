@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, redirect, useNavigate } from "react-router-dom"
 import axios from "axios"
+import { useNetworkContext } from "../main"
 
 
 let searchSubmitTimerId=null;
@@ -10,11 +11,13 @@ let seachTimerLength= 1000;
 export default function SearchBar(){
     const navigate = useNavigate()
     const [searchResults, setSearchResults] = useState([])
+    const {network, setNetwork} = useNetworkContext()
+
     // inner function for firing API call to search for movie
     function searchForQuery(){
         let input = document.getElementById("searchbar").value
         console.log(input)
-        axios.get(`http://localhost:4000/api/search/${input}`)
+        axios.get(`http://${network.host}:${network.serverPort}/api/search/${input}`)
             .then((res) => {
                 
                 setSearchResults(res.data)
@@ -49,7 +52,7 @@ export default function SearchBar(){
                         searchResults.map((movie, index) => (
                             //index used for mapping each movie so react doesn't complain
                             <li className="dropdown-item" key={index}>
-                                <Link reloadDocument to={`http://localhost:3000/movie/${movie.id}`} >{movie.title}</Link>
+                                <Link reloadDocument to={`http://${network.host}:${network.clientPort}/movie/${movie.id}`} >{movie.title}</Link>
                             </li>
                         )) 
                     : //no results from db
