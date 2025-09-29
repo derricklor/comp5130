@@ -20,34 +20,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Connect to db
-var db = null;
-try {
-  const dbConnection = mysql.createConnection({
-    // host: "localhost", // if not using docker compose
-    host: "db", // when using docker compose, the host is the name of the service
-    port: 3306, // default mysql port
-    user: "root",
-    password: "secretpassword", // should use .env file and dockerignore for security, same MYSQL_ROOT_PASSWORD found in compose.yaml
-    database: "moviedb",
-  });
-  db = dbConnection;
-} catch (err) {
-  console.log("DB connection error: ", err)
-  throw err;
-}
+const db = mysql.createConnection({
+  // host: "localhost", // if not using docker compose
+  host: "db", // when using docker compose, the host is the name of the service
+  port: 3306, // default mysql port
+  user: "root",
+  password: "secretpassword", // should use .env file and dockerignore for security, same MYSQL_ROOT_PASSWORD found in compose.yaml
+  database: "moviedb",
+});
 
 db.connect(function (err) {
   if (err) {
-    console.log("Error connecting to MySQL:",
-      err);
+    console.log("Error connecting to MySQL:", err);
+    // Exits the process with a failure code (e.g., 1)
+    process.exit(1);
   }
   else {
     console.log("Connection established");
   }
 });
+
 // Serve static files from the public dir
 //app.use(express.static(path.join(__dirname,"public")));
-
 
 
 //test post request
