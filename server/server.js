@@ -27,7 +27,15 @@ const db = mysql.createConnection({
   database: "moviedb"
 });
 
-
+db.connect(function (err) {
+  if (err) {
+    console.log("Error connecting to MySQL:",
+      err);
+  }
+  else {
+    console.log("Connection established");
+  }
+});
 // Serve static files from the public dir
 //app.use(express.static(path.join(__dirname,"public")));
 
