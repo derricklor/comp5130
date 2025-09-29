@@ -9,83 +9,67 @@
 # https://github.com/docker/awesome-compose
 services:
   client:
-    build:
-      context: client
-      target: client-develop
-    environment:
-      NODE_ENV: development
-    command: npm run start
+    build: ./client
+    container_name: client_app
+    command: npm run dev
+    #restart: always
     ports:
-      - 3000:3000
-    develop:
-      watch:
-      - path: ./client/src
-        action: sync
-        target: /usr/local/app/src
-      - path: ./client/package.json
-        action: rebuild
+      - 5173:5173
+    volumes:
+      - ./client:/usr/src/app
     networks:
       - frontend
     depends_on:
       - server
 
   server:
-    build:
-      context: server
-      target: server-develop
-    environment:
-      NODE_ENV: development
-    command: npm run start
+    build: ./server
+    container_name: node_server
+    command: npm run dev
+    #restart: always
     ports:
       - 4000:4000
     networks:
       - frontend
       - backend
-    develop:
-      watch:
-      - path: ./server/server.js
-        action: sync
-        target: /usr/local/app/src #
-      - path: ./server/package.json
-        action: rebuild
-    depends_on:
-      - mysql
-
-# `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker-compose up`.
     
-  mysql:
-    image: mysql
-    restart: always #unless-stopped
-    command: --default-authentication-plugin=mysql_native_password
-#     user: postgres
-#     secrets:
-#       - db-password
+    volumes:
+      - ./server:/usr/src/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+# `depends_on` tells Docker Compose to start running the database before your application. 
+# `condition: service_healthy` adds a health check to wait until the database is ready to accept connections before starting your application.
+    
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'secretpassword' # or use password file and put in dockerignore list
+      MYSQL_DATABASE: 'moviedb'
+      #MYSQL_USER: 'user' # MYSQL_USER and MYSQL_PASSWORD are for configuring a regular user and cannot be used for the root user
+      #MYSQL_PASSWORD: ''
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/moviedb4.sql:/docker-entrypoint-initdb.d/moviedb4.sql # link db init from file
+      - mysql_data:/var/lib/mysql # default location defined by mysql
     networks:
       - backend
-    volumes:
-      - db-data:/var/lib/mysql # default location defined by mysql
-    environment:
-      MYSQL_DATABASE: moviedb
-      MYSQL_ROOT_PASSWORD: 'secretpassword' # or use password file and put in dockerignore list
-      # MYSQL_USER: 'user' # by default creates root user and root pass
-      # MYSQL_PASS: ''
-    # healthcheck:
-    #   test: [ "CMD", "pg_isready" ]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
-  db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
+  mysql_data: # persists mysql data between container restarts.
 
 networks:
-  # The presence of these objects is sufficient to define them
-  frontend: 
+  frontend: # default driver is bridge
+    driver: bridge
   backend: 
+    driver: bridge
